@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Topic>
+@{
+    ViewData["Title"] = (ViewBag.Category as Category).Name;
+    Category category = ViewBag.Category as Category;
+}
+<div class="shadow mt-30">
+    <div class="p-10 bg-light font-weight-bold border-bottom">
+        <div class="row">
+            <div class="col-lg-9">
+                @category.Name
+            </div>
+            <div class="col-lg-3">
+                <ul class="mini-menu">
+                    <li class="el-menu"><a href="~/Topic/New/@category.Id">New Topic</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    @foreach (Topic topic in Model)
+    {
+        <div class="p-10 row">
+            <div class="col-lg-8 d-inline-block">
+                <img src="~/images/category-icon.png" height="20" width="20" />
+                @if (topic.IsClosed)
+                {
+                    <span class="badge badge-danger">Closed</span>
+                }
+                <a href="~/Home/Topic/@topic.Id"> @topic.Name</a>
+            </div>
+            <div class="col-lg-2">
+                <span class="small">Last active</span>
+            </div>
+            <div class="col-lg-2">
+                <span class="small">Messages: 0</span>
+            </div>
+        </div>
+        <hr class="clear"/>
+    }
+</div>

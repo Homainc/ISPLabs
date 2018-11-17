@@ -1,0 +1,77 @@
+﻿@model IEnumerable<ForumMessageModel>
+@{
+    ViewData["Title"] = "Topic";
+    Topic topic = ViewBag.Topic as Topic;
+}
+<div class="shadow mt-30">
+    <div class="p-10 bg-light font-weight-bold border-bottom">
+        <div class="row">
+            <div class="col-lg-9">
+                @if (topic.IsClosed)
+                {
+                <span class="badge badge-danger">Closed</span>
+                }
+                @topic.Name
+            </div>
+            <div class="col-lg-3">
+                @if (User.Identity.IsAuthenticated)
+                {
+                <ul class="mini-menu">
+                    @if (!topic.IsClosed)
+                    {
+                        <li class="el-menu"><a href="#send_msg">New Message</a></li>
+                    }
+                    @if (User.IsInRole("admin") || User.Identity.Name == ViewBag.TopicOwner)
+                    {
+                        <li class="el-menu"><a href="~/Topic/Remove/@topic.Id">Remove Topic</a></li>
+                        @if (!topic.IsClosed)
+                        {
+                        <li class="el-menu"><a href="~/Topic/Close/@topic.Id">Close Topic</a></li>
+                        }
+                    }
+                </ul>
+                }
+            </div>
+        </div>
+    </div>
+    @foreach (ForumMessageModel msg in Model)
+    {
+    <div class="clear row border-bottom" style="position:relative;">
+        <div class="p-10 col-lg-2 border-right">
+            <a href="#">@msg.UserLogin</a><br />
+            <p class="clear @msg.UserRole">@msg.UserRole</p><br />
+            <img style="border-radius: 90px; border:1px solid gray;" src="~/images/default-avatar.png" height="90" width="90" /><br />
+            <span class="small">Messages: @msg.UserMessages</span>
+        </div>
+        <div class="col-lg-10">
+            <span class="small">@msg.Date.ToShortDateString() @msg.Date.ToShortTimeString()</span>
+            <p>@msg.Text</p>
+            @if (msg.IsTopicOwner || User.IsInRole("admin"))
+            {
+                <div style="text-align: right; width:100%;">
+                    <a href="~/Topic/DeleteMessage/@msg.Id" class="clear" style="color:red; font-size:9pt; position:absolute; bottom:10px; right:10px;">Delete message</a>
+                    <a href="~/Topic/EditMessage/@msg.Id" class="clear" style="font-size:9pt; position:absolute; bottom:10px; right:100px;">Edit message</a>
+                </div>
+            }
+        </div>
+    </div>
+    }
+        <div class="clear row border-bottom">
+            @if (topic.IsClosed)
+            {
+            <div style="text-align:center; vertical-align:central; width: 100%; padding:10px; height: 50px;">
+                <p style="color:darkred; font-style:italic;">Topic closed.</p>
+            </div>
+            }
+            else if (User.Identity.IsAuthenticated)
+            {
+                @await Component.InvokeAsync("SendMessageForm", new { email = User.Identity.Name })
+            }
+            else
+            {
+                <div style="text-align:center; vertical-align:central; width: 100%; padding:10px; height: 50px;">
+                    <p>You must <a href="~/Account/Login">login</a> or <a href="~/Account/Register">register</a> to send a message.</p>
+                </div>
+            }
+        </div>
+</div>

@@ -1,0 +1,20 @@
+﻿@model SendForumMessageModel
+<div class="p-10 col-lg-2 border-right">
+    <p class="clear">@((ViewBag.CurrentUser as User).Login)</p><br />
+    <img class="clear" style="border-radius: 90px; border:1px solid gray;" src="~/images/default-avatar.png" height="90" width="90" /><br />
+</div>
+<div id="send_msg" class="col-lg-10">
+    <form asp-action="SendMessage" asp-controller="Topic" asp-antiforgery="true">
+        <div class="validation" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group">
+            <input readonly type="number" asp-for="TopicId" class="mt-10 form-control collapse" value="@ViewBag.Topic.Id"/>
+        </div>
+        <div class="form-group">
+            <textarea type="text" asp-for="Text" class="mt-10 form-control"></textarea>
+            <span class="small" asp-validation-for="Text" />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Send" class="btn btn-default" />
+        </div>
+    </form>
+</div>
