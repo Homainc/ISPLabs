@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ISPLabs.Services;
 using ISPLabs.Models;
@@ -12,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ISPLabs.Controllers
 {
-    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -27,7 +23,7 @@ namespace ISPLabs.Controllers
         {
             using (NHibernate.ISession session = nHibernateHelper.OpenSession())
             {
-                return session.Query<Category>().Select(x => new CategoryAPIModel(x)).ToHashSet();
+                return session.Query<Category>().Select(x => new CategoryAPIModel(x, false)).ToHashSet();
             }
         }
         [HttpGet("{id}", Name = "GetCategory")]
@@ -36,9 +32,10 @@ namespace ISPLabs.Controllers
             using (NHibernate.ISession session = nHibernateHelper.OpenSession())
             {
                 var cat = session.Query<Category>().Single(x => x.Id == id);
-                return new CategoryAPIModel(cat);
+                return new CategoryAPIModel(cat, true);
             }
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public ActionResult Create(CategoryAPIModel cat)
         {
@@ -49,7 +46,8 @@ namespace ISPLabs.Controllers
                     var addedCat = new Category
                     {
                         Partition = session.Query<Partition>().Single(x => x.Id == cat.PartitionId),
-                        Name = cat.Name
+                        Name = cat.Name,
+                        Description = cat.Description,
                     };
                     session.SaveOrUpdate(addedCat);
                     transaction.Commit();
@@ -58,6 +56,7 @@ namespace ISPLabs.Controllers
                 }
             }
         }
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public IActionResult Update(int id, CategoryAPIModel cat)
         {
@@ -67,12 +66,14 @@ namespace ISPLabs.Controllers
                 {
                     var addedCat = session.Query<Category>().Single(x => x.Id == id);
                     addedCat.Name = cat.Name;
+                    addedCat.Description = cat.Description;
                     session.Update(addedCat);
                     transaction.Commit();
                     return NoContent();
                 }
             }
         }
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

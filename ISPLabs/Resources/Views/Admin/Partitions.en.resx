@@ -117,16 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Already login msg 1" xml:space="preserve">
-    <value>Sie sind bereits angemeldet und möchten</value>
+  <data name="Add category" xml:space="preserve">
+    <value>Add category</value>
   </data>
-  <data name="Already login msg 2" xml:space="preserve">
-    <value>geh raus</value>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
   </data>
-  <data name="PandaForum" xml:space="preserve">
-    <value>PandaForum</value>
+  <data name="Edit category" xml:space="preserve">
+    <value>Edit category</value>
   </data>
-  <data name="Title" xml:space="preserve">
-    <value>Zuhause</value>
+  <data name="Edit partition" xml:space="preserve">
+    <value>Edit partition</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="New Partition" xml:space="preserve">
+    <value>New Partition</value>
   </data>
 </root>

@@ -117,22 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Admin menu" xml:space="preserve">
-    <value>Admin Menu</value>
+  <data name="Closed" xml:space="preserve">
+    <value>Закрыта</value>
   </data>
-  <data name="Log In" xml:space="preserve">
-    <value>Log In</value>
+  <data name="InitialMessage" xml:space="preserve">
+    <value>Сообщение темы</value>
   </data>
-  <data name="Log Out" xml:space="preserve">
-    <value>Log Out</value>
+  <data name="Last activity" xml:space="preserve">
+    <value>Последняя активность</value>
   </data>
-  <data name="Partitions" xml:space="preserve">
-    <value>Partitions</value>
+  <data name="Messages" xml:space="preserve">
+    <value>Сообщений</value>
   </data>
-  <data name="Register" xml:space="preserve">
-    <value>Register</value>
+  <data name="Name" xml:space="preserve">
+    <value>Название</value>
   </data>
-  <data name="Users" xml:space="preserve">
-    <value>Users</value>
+  <data name="New topic" xml:space="preserve">
+    <value>Новая тема</value>
   </data>
 </root>

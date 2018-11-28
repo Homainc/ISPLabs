@@ -117,22 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Admin menu" xml:space="preserve">
-    <value>Админ меню</value>
+  <data name="Already login msg 1" xml:space="preserve">
+    <value>Вы уже выполнили вход в аккаунт, хотите </value>
   </data>
-  <data name="Log In" xml:space="preserve">
-    <value>Войти</value>
+  <data name="Already login msg 2" xml:space="preserve">
+    <value>выйти</value>
   </data>
-  <data name="Log Out" xml:space="preserve">
-    <value>Выйти</value>
+  <data name="Email" xml:space="preserve">
+    <value>Электронная почта</value>
   </data>
-  <data name="Partitions" xml:space="preserve">
-    <value>Разделы</value>
-  </data>
-  <data name="Register" xml:space="preserve">
-    <value>Регистрация</value>
-  </data>
-  <data name="Users" xml:space="preserve">
-    <value>Пользователи</value>
+  <data name="Password" xml:space="preserve">
+    <value>Пароль</value>
   </data>
 </root>

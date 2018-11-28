@@ -8,20 +8,20 @@ namespace ISPLabs.ViewModels
 {
     public class RegisterModel
     {
-        [Required(ErrorMessage = "Login not specified")]
+        [Required(ErrorMessage = "LoginRequired")]
         public string Login { get; set; }
 
-        [EmailAddress]
-        [Required(ErrorMessage = "E-mail not specified")]
+        [EmailAddress(ErrorMessage = "IncorrectEmail")]
+        [Required(ErrorMessage = "EmailRequired")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Password not specified")]
+        [Required(ErrorMessage = "PasswordRequired")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Confirm password not specified")]
+        [Required(ErrorMessage = "ConfirmPasswordRequired")]
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "The password is incorrect")]
+        [Compare("Password", ErrorMessage = "IncorrectConfirmPassword")]
         public string ConfirmPassword { get; set; }
     }
 }

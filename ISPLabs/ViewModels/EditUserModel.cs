@@ -10,12 +10,12 @@ namespace ISPLabs.ViewModels
     {
         [Required]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "LoginRequired")]
         public string Login { get; set; }
-        [Required]
-        [EmailAddress]
+        [Required(ErrorMessage = "Email required")]
+        [EmailAddress(ErrorMessage = "IncorrectEmail")]
         public string Email { get; set; }
-        [Required]
+        [Required(ErrorMessage = "PasswordRequired")]
         public string Password { get; set; }
         [Required]
         public string Role { get; set; }

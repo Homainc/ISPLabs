@@ -8,6 +8,7 @@ $(document).ready(function () {
 });
 
 function getData() {
+    $("#load_bar").removeClass("collapse");
     $.ajax({
         type: "GET",
         url: uri,
@@ -27,7 +28,7 @@ function getData() {
                     var ctr = $("<tr></tr>")
                         .append($("<th></th>").text(citem.id))
                         .append($("<td></td>").text(citem.name))
-                        .append($("<td></td>").text(citem.topics))
+                        .append($("<td></td>").text(citem.topicsCount))
                         .append($("<td></td>")
                             .append($("<button></button>")
                                 .addClass("btn btn-light clear")
@@ -39,7 +40,8 @@ function getData() {
                                     .attr("width", "20"))
                                 .attr("data-id", citem.id)
                                 .attr("data-cat", citem.name)
-                                .attr("data-pid", item.id))
+                                .attr("data-pid", item.id)
+                                .attr("data-description", citem.description))
                             .append($("<button></button>")
                                 .addClass("btn btn-light clear")
                                 .attr("data-toggle", "modal")
@@ -103,6 +105,7 @@ function getData() {
                 extr.appendTo(tBody);
             });
             partitons = data;
+            $("#load_bar").addClass("collapse");
         },
     });
 }
@@ -192,6 +195,7 @@ function createCat() {
     var cat = {
         partitionId: cf.find($("[name = 'Id']")).val(),
         name: cf.find($("[name = 'Name']")).val(),
+        description: cf.find($("[name = 'Description']")).val(),
     };
     if (cf.validate().form())
         $.ajax({
@@ -233,11 +237,13 @@ function deleteCat(id) {
 
 
 function editCat(id, pid) {
+    var form = $("#edit_cat_form");
     var cat = {
         partitionId: pid,
-        name: $("#edit_cat_form").find($("[name = 'Name']")).val(),
+        name: form.find($("[name = 'Name']")).val(),
+        description: form.find($("[name = 'Description']")).val(),
     };
-    if ($("#edit_cat_form").validate().form())
+    if (form.validate().form())
         $.ajax({
             type: "PUT",
             url: catUri + "/" + id,
@@ -259,7 +265,9 @@ $("#edit_cat").on('show.bs.modal', function (event) {
     const cname = button.data("cat");
     const id = button.data("id");
     const pid = button.data("pid");
+    const description = button.data("description");
     const modal = $(this);
     modal.find($("[name = 'Name']")).val(cname);
+    modal.find($("[name = 'Description']")).val(description);
     modal.find($("#editCatBtn")).attr("onclick", "editCat(" + id + "," + pid + ")");
 });

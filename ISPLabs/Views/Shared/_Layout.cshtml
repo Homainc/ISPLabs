@@ -1,8 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Builder
-@using Microsoft.AspNetCore.Http.Features
 @using Microsoft.AspNetCore.Localization
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Options
+
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
 @inject IOptions<RequestLocalizationOptions> LocOptions
 @{
     // получаем сервис IRequestCultureFeature
@@ -24,14 +25,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-    <form asp-controller="Home" asp-action="SetLanguage" style="margin-top:20px;"
-          asp-route-returnUrl="@Context.Request.Path"
-          method="post" class="form-horizontal">
-        <select name="culture" onchange="this.form.submit();"
-                asp-for="@requestCulture.RequestCulture.UICulture.Name"
-                asp-items="cultureItems"></select>
-    </form>
-    <div class="container">
+    <div class="container" style="height:100%">
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -47,7 +41,7 @@
                     @if (!User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item p-10">
-                            <a class="nav-link" href="~/Account/Login">@SharedLocalizer["Sign In"]</a>
+                            <a class="nav-link" href="~/Account/Login">@SharedLocalizer["Log In"]</a>
                         </li>
                         <li class="nav-item p-10">
                             <a class="nav-link" href="~/Account/Register">@SharedLocalizer["Register"]</a>
@@ -80,8 +74,26 @@
                 </ul>
             </div>
         </nav>
-        <div class="mt-30">
+        <div class="mt-30" style="background-color:white;">
             @RenderBody()
+        </div>
+        <div id="footer" class="container bg-light shadow p-10">
+            <div class="row" style="font-weight: 300;">
+                <div class="col-lg-9">© 2018 "HOMA INC." </div>
+                <div class="col-lg-3">
+                    <form asp-controller="Home" asp-action="SetLanguage" asp-route-returnUrl="@Context.Request.Path"
+                          method="post" class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-4">@SharedLocalizer["Language"]:</div>
+                            <div class="col-lg-8">
+                                <select name="culture" class="form-control form-control-sm" onchange="this.form.submit();"
+                                        asp-for="@requestCulture.RequestCulture.UICulture.Name"
+                                        asp-items="@cultureItems"></select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

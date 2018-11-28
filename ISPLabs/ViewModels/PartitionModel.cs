@@ -10,7 +10,7 @@ namespace ISPLabs.ViewModels
     {
         public int Id { get; set; }
         public int CatId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "NameRequired")]
         public string Name { get; set; }
         public int Categories { get; set; }
     }

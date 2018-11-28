@@ -10,6 +10,7 @@ using ISPLabs.Services;
 using ISPLabs.ViewModels;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ISPLabs.Controllers
 {
@@ -36,40 +37,48 @@ namespace ISPLabs.Controllers
             //nHibernateHelper.AddTest();
             using (NHibernate.ISession session = nHibernateHelper.OpenSession())
             {
-                var parts = session.Query<Partition>().ToList();
-                return View(parts);
+                return View();
             }
         }
         public IActionResult Category(int id)
         {
             using (NHibernate.ISession session = nHibernateHelper.OpenSession())
             {
-                ViewBag.Category = session.Query<Category>().Where(x => x.Id == id).First();
-                var parts = session.Query<Topic>().Where(x => x.Category.Id == id).ToList();
-                return View(parts);
+                ViewBag.catId = id;
+                ViewBag.catName = session.Query<Category>().Single(x => x.Id == id).Name;
+                return View();
             }
         }
         public IActionResult Topic(int id)
         {
             using (NHibernate.ISession session = nHibernateHelper.OpenSession())
             {
-                var topic = session.Query<Topic>().Where(x => x.Id == id).First();
-                ViewBag.Topic = topic;
+                var topic = session.Query<Topic>().Single(x => x.Id == id);
+                ViewBag.TopicId = topic.Id;
+                ViewBag.TopicName = topic.Name;
                 ViewBag.TopicOwner = topic.User.Email;
-                var parts = session.Query<ForumMessage>().Where(x => x.Topic.Id == id).Select(x =>
-                    new ForumMessageModel
-                    {
-                        Id = x.Id,
-                        Date = x.Date,
-                        Text = x.Text,
-                        UserLogin = x.User.Login,
-                        UserMessages = x.User.Messages.Count,
-                        IsTopicOwner = x.User.Email == User.Identity.Name,
-                        UserRole = x.User.Role.Name
-                    }    
-                ).ToList();
-                return View(parts);
+                return View();
             }
+        }
+        [Authorize]
+        [HttpGet]
+        public IActionResult RemoveTopic(int id)
+        {
+            using (NHibernate.ISession session = nHibernateHelper.OpenSession())
+            {
+                var topic = session.Query<Topic>().FirstOrDefault(x => x.Id == id);
+                var catId = topic.Category.Id;
+                if (topic != null && (User.Identity.Name == topic.User.Email || User.IsInRole("admin")))
+                {
+                    using (ITransaction transaction = session.BeginTransaction())
+                    {
+                        session.Delete(topic);
+                        transaction.Commit();
+                        return RedirectToAction("Category", "Home", new { id = catId });
+                    }
+                }
+            }
+            return StatusCode(403);
         }
     }
 }

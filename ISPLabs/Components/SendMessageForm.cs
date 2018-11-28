@@ -21,9 +21,9 @@ namespace ISPLabs.Components
         {
             using(ISession session = nHibernateHelper.OpenSession())
             {
-                var user = session.Query<User>().FirstOrDefault(x => x.Email == email);
-                ViewBag.CurrentUser = user;
-                return View(new SendForumMessageModel());
+                var user = session.Query<User>().Single(x => x.Email == email);
+                ViewBag.CurrentLogin = user.Login;
+                return View();
             }
         }
     }

@@ -2,19 +2,14 @@
 let users = null;
 function getCount(data) {
     const el = $("#counter");
-    let name = "user)";
-    if (data) {
-        if (data > 1) {
-            name = "users)";
-        }
-        el.text("(" + data + " " + name);
-    } else {
-        el.text("(No" + name); 
-    }
+    el.text("(" + data + ")");
 }
 
 $(document).ready(function () {
+    $("#load_bar").removeClass("collapse");
     getData();
+    $("#load_bar").addClass("collapse");
+    $("#users_table").removeClass("collapse");
 });
 
 function getData() {
@@ -67,7 +62,6 @@ $('#edit_user').on('show.bs.modal', function (event) {
             modal.find($("[type = 'submit']")).attr('data-id', data.id);
         }
     });
-    modal.find('.modal-title').text('Edit window')
 })
 
 $('#request_delete').on('show.bs.modal', function (event) {
@@ -77,7 +71,6 @@ $('#request_delete').on('show.bs.modal', function (event) {
     var modal = $(this);
     modal.find($("#deleting_user")).text(login);
     modal.find($("#deleteUserBtn")).attr("onclick", "deleteUser(" + id + ")");
-    modal.find('.modal-title').text('Edit window')
 })
 
 function deleteUser(id) {

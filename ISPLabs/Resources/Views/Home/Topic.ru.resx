@@ -117,22 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Admin menu" xml:space="preserve">
-    <value>Admin-Menü</value>
+  <data name="Close topic" xml:space="preserve">
+    <value>Закрыть тему</value>
   </data>
-  <data name="Log In" xml:space="preserve">
-    <value>Einloggen</value>
+  <data name="Closed" xml:space="preserve">
+    <value>Закрыта</value>
   </data>
-  <data name="Log Out" xml:space="preserve">
-    <value>Ausloggen</value>
+  <data name="Delete message" xml:space="preserve">
+    <value>Удалить сообщение</value>
   </data>
-  <data name="Partitions" xml:space="preserve">
-    <value>Partitionen</value>
+  <data name="Do you really want to delete this message" xml:space="preserve">
+    <value>Вы действительно хотите удалить это сообщение</value>
   </data>
-  <data name="Register" xml:space="preserve">
-    <value>Registrieren</value>
+  <data name="Edit message" xml:space="preserve">
+    <value>Редактировать сообщение</value>
   </data>
-  <data name="Users" xml:space="preserve">
-    <value>Benutzer</value>
+  <data name="login" xml:space="preserve">
+    <value>войти</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Сообщений</value>
+  </data>
+  <data name="New message" xml:space="preserve">
+    <value>Новое сообщение</value>
+  </data>
+  <data name="or" xml:space="preserve">
+    <value>или</value>
+  </data>
+  <data name="register" xml:space="preserve">
+    <value>зарегистрироваться</value>
+  </data>
+  <data name="Remove topic" xml:space="preserve">
+    <value>Удалить тему</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="to send a message" xml:space="preserve">
+    <value>,чтобы отправить сообщение</value>
+  </data>
+  <data name="Topic closed" xml:space="preserve">
+    <value>Тема закрыта</value>
+  </data>
+  <data name="You must" xml:space="preserve">
+    <value>Вы должны</value>
   </data>
 </root>

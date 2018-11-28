@@ -6,7 +6,7 @@ namespace ISPLabs.ViewModels
     {
         public int Id { get; set; }
         public int TopicId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "TextRequired")]
         public string Text { get; set; }
     }
 }

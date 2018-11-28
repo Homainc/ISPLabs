@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ISPLabs.ViewModels
 {
@@ -11,10 +7,10 @@ namespace ISPLabs.ViewModels
         [Required]
         public int CategoryId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "NameRequired")]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "InitialMessageRequired")]
         public string InitialText { get; set; }
     }
 }

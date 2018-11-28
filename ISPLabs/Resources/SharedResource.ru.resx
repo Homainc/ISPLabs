@@ -117,16 +117,82 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Already login msg 1" xml:space="preserve">
-    <value>Sie sind bereits angemeldet und möchten</value>
+  <data name="Admin menu" xml:space="preserve">
+    <value>Админ меню</value>
   </data>
-  <data name="Already login msg 2" xml:space="preserve">
-    <value>geh raus</value>
+  <data name="Close" xml:space="preserve">
+    <value>Закрыть</value>
   </data>
-  <data name="PandaForum" xml:space="preserve">
-    <value>PandaForum</value>
+  <data name="Confirm" xml:space="preserve">
+    <value>Подтверждение</value>
   </data>
-  <data name="Title" xml:space="preserve">
-    <value>Zuhause</value>
+  <data name="ConfirmPasswordRequired" xml:space="preserve">
+    <value>Необходимо подтвердить пароль</value>
+  </data>
+  <data name="Do you really want to delete" xml:space="preserve">
+    <value>Вы действительно хотите удалить</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>Необходимо ввести электронную почту</value>
+  </data>
+  <data name="IncorrectConfirmPassword" xml:space="preserve">
+    <value>Пароли не совпадают</value>
+  </data>
+  <data name="IncorrectEmail" xml:space="preserve">
+    <value>Некорректный адрес электронной почты</value>
+  </data>
+  <data name="InitialMessageRequired" xml:space="preserve">
+    <value>Необходимо ввести сообщение темы</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="Log In" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Log Out" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
+  <data name="LoginRequired" xml:space="preserve">
+    <value>Необходимо ввести логин</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Сообщение</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Сообщения</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Необходимо ввести имя</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="Partitions" xml:space="preserve">
+    <value>Разделы</value>
+  </data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>Необходимо ввести пароль</value>
+  </data>
+  <data name="Please wait" xml:space="preserve">
+    <value>Пожалуйста подождите..</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Регистрация</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Отправить</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>Темы</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Пользователи</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
   </data>
 </root>

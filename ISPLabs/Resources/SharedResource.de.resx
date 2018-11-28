@@ -117,16 +117,82 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Already login msg 1" xml:space="preserve">
-    <value>Sie sind bereits angemeldet und möchten</value>
+  <data name="Admin menu" xml:space="preserve">
+    <value>Admin-Menü</value>
   </data>
-  <data name="Already login msg 2" xml:space="preserve">
-    <value>geh raus</value>
+  <data name="Close" xml:space="preserve">
+    <value>Schließen</value>
   </data>
-  <data name="PandaForum" xml:space="preserve">
-    <value>PandaForum</value>
+  <data name="Confirm" xml:space="preserve">
+    <value>Bestätigen</value>
   </data>
-  <data name="Title" xml:space="preserve">
-    <value>Zuhause</value>
+  <data name="ConfirmPasswordRequired" xml:space="preserve">
+    <value>Passwort bestätigen</value>
+  </data>
+  <data name="Do you really want to delete" xml:space="preserve">
+    <value>Möchten Sie wirklich löschen</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>E-Mail ist erforderlich</value>
+  </data>
+  <data name="IncorrectConfirmPassword" xml:space="preserve">
+    <value>Passwort stimmt nicht überein</value>
+  </data>
+  <data name="IncorrectEmail" xml:space="preserve">
+    <value>E-Mail ist falsch</value>
+  </data>
+  <data name="InitialMessageRequired" xml:space="preserve">
+    <value>Anfangsnachricht erforderlich</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="Log In" xml:space="preserve">
+    <value>Einloggen</value>
+  </data>
+  <data name="Log Out" xml:space="preserve">
+    <value>Ausloggen</value>
+  </data>
+  <data name="LoginRequired" xml:space="preserve">
+    <value>Login ist erforderlich</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Botschaft</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Mitteilungen</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Name ist erforderlich</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+  <data name="Partitions" xml:space="preserve">
+    <value>Partitionen</value>
+  </data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>Passwort wird benötigt</value>
+  </data>
+  <data name="Please wait" xml:space="preserve">
+    <value>Warten Sie mal..</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Registrieren</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Sparen</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Senden</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>Themen</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Benutzer</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
   </data>
 </root>

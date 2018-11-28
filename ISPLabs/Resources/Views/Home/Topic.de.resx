@@ -117,16 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Already login msg 1" xml:space="preserve">
-    <value>Sie sind bereits angemeldet und möchten</value>
+  <data name="Close topic" xml:space="preserve">
+    <value>Thema schließen</value>
   </data>
-  <data name="Already login msg 2" xml:space="preserve">
-    <value>geh raus</value>
+  <data name="Closed" xml:space="preserve">
+    <value>Geschlossen</value>
   </data>
-  <data name="PandaForum" xml:space="preserve">
-    <value>PandaForum</value>
+  <data name="Delete message" xml:space="preserve">
+    <value>Nachricht löschen</value>
   </data>
-  <data name="Title" xml:space="preserve">
-    <value>Zuhause</value>
+  <data name="Do you really want to delete this message" xml:space="preserve">
+    <value>Möchten Sie diese Nachricht wirklich löschen?</value>
+  </data>
+  <data name="Edit message" xml:space="preserve">
+    <value>Nachricht bearbeiten</value>
+  </data>
+  <data name="login" xml:space="preserve">
+    <value>anmeldung</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Mitteilungen</value>
+  </data>
+  <data name="New message" xml:space="preserve">
+    <value>Neue Nachricht</value>
+  </data>
+  <data name="or" xml:space="preserve">
+    <value>oder</value>
+  </data>
+  <data name="register" xml:space="preserve">
+    <value>registrieren</value>
+  </data>
+  <data name="Remove topic" xml:space="preserve">
+    <value>Thema entfernen</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="to send a message" xml:space="preserve">
+    <value>eine Nachricht senden</value>
+  </data>
+  <data name="Topic closed" xml:space="preserve">
+    <value>Thema geschlossen</value>
+  </data>
+  <data name="You must" xml:space="preserve">
+    <value>Du musst</value>
   </data>
 </root>
