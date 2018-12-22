@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ISPLabs.Models.API;
 using ISPLabs.Services;
-using ISPLabs.Models; 
+using ISPLabs.Models;
+using ISPLabs.Repositories.Interfaces;
 
 namespace ISPLabs.Controllers
 {
@@ -14,18 +15,10 @@ namespace ISPLabs.Controllers
     [ApiController]
     public class RoleController : ControllerBase
     {
-        private NHibernateHelper nHibernateHelper;
-        public RoleController(NHibernateHelper nHibernateHelper)
-        {
-            this.nHibernateHelper = nHibernateHelper;
-        }
+        private IRoleRepository roles;
+        public RoleController(IRoleRepository roles) => this.roles = roles;
+
         [HttpGet]
-        public ActionResult<ISet<RoleAPIModel>> GetAll()
-        {
-            using (NHibernate.ISession session = nHibernateHelper.OpenSession())
-            {
-                return session.Query<Role>().Select(x => new RoleAPIModel(x)).ToHashSet();
-            }
-        }
+        public ActionResult<ISet<RoleAPIModel>> GetAll() => roles.GetAll();
     }
 }

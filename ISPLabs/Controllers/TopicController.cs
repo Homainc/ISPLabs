@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ISPLabs.ViewModels;
 using ISPLabs.Services;
-using NHibernate;
 using ISPLabs.Models;
 using Microsoft.AspNetCore.Authorization;
 using ISPLabs.Models.API;
+using ISPLabs.Repositories.Interfaces;
 
 namespace ISPLabs.Controllers
 {
@@ -16,80 +14,60 @@ namespace ISPLabs.Controllers
     [ApiController]
     public class TopicController : Controller
     {
-        private NHibernateHelper nHibernateHelper;
-        public TopicController(NHibernateHelper nHibernateHelper)
+        private ICategoryRepository categories;
+        private ITopicRepository topics;
+        private IUserRepository users;
+        private IForumMessageRepository messages;
+        public TopicController(ICategoryRepository categories, ITopicRepository topics, IUserRepository users, IForumMessageRepository messages)
         {
-            this.nHibernateHelper = nHibernateHelper;
+            this.categories = categories;
+            this.topics = topics;
+            this.users = users;
+            this.messages = messages;
         }
         [HttpGet]
-        public ActionResult<ISet<TopicAPIModel>> GetAll()
-        {
-            using (NHibernate.ISession session = nHibernateHelper.OpenSession())
-            {
-                return session.Query<Topic>().Select(x => new TopicAPIModel(x, false)).ToHashSet();
-            }
-        }
+        public ActionResult<ISet<TopicAPIModel>> GetAll() => topics.GetAll();
+
         [HttpGet("{id}", Name = "GetTopic")]
-        public ActionResult<TopicAPIModel> GetById(int id)
-        {
-            using (NHibernate.ISession session = nHibernateHelper.OpenSession())
-            {
-                var topic = session.Query<Topic>().Single(x => x.Id == id);
-                if (topic == null)
-                    return NotFound();
-                return new TopicAPIModel(topic, true);
-            }
-        }
+        public ActionResult<TopicAPIModel> GetById(int id) => topics.GetById(id);
+
         [Authorize]
         [HttpPost]
-        public ActionResult Create(NewTopicModel topic)
+        public ActionResult Create(NewTopicModel model)
         {
-            using (NHibernate.ISession session = nHibernateHelper.OpenSession())
+            var topic = new Topic
             {
-                using (ITransaction transaction = session.BeginTransaction())
-                {
-                    var aTopic = new Topic
-                    {
-                        Category = session.Query<Category>().Single(x => x.Id == topic.CategoryId),
-                        Name = topic.Name,
-                        Date = DateTime.Now,
-                        User = session.Query<User>().Single(x => x.Email == User.Identity.Name),
-                        IsClosed = false,
-                    };
-                    var initMsg = new ForumMessage
-                    {
-                        Text = topic.InitialText,
-                        User = aTopic.User,
-                        Date = aTopic.Date,
-                        Topic = aTopic,
-                    };
-                    aTopic.Messages.Add(initMsg);
-                    session.SaveOrUpdate(aTopic);
-                    session.SaveOrUpdate(initMsg);
-                    transaction.Commit();
-                    var dbTopic = session.Query<Topic>().Single(x => x.Name == aTopic.Name && x.Date == aTopic.Date);
-                    return CreatedAtRoute("GetTopic", new { id = dbTopic.Id }, new TopicAPIModel(dbTopic));
-                }
-            }
+                Category = categories.GetByIdWithoutChilds(model.CategoryId),
+                Name = model.Name,
+                Date = DateTime.Now,
+                User = users.GetByEmail(User.Identity.Name),
+                IsClosed = false,
+            };
+            topic = topics.Append(topic);
+            topic.Messages = new HashSet<ForumMessage>();
+            var msg = new ForumMessage
+            {
+                Text = model.InitialText,
+                User = topic.User,
+                Date = DateTime.Now,
+                Topic = topic,
+            };
+            topic.Messages.Add(msg);
+            messages.Append(msg);
+            return CreatedAtRoute("GetTopic", new { id = topic.Id }, new TopicAPIModel(topic));
         }
+
         [Authorize]
         [HttpPut("{id}")]
         public IActionResult Update(int id, TopicAPIModel topic)
         {
-            using (ISession session = nHibernateHelper.OpenSession())
+            var dbTopic = topics.GetByIdWithUser(id);
+            topic.Id = id;
+            if (User.Identity.Name == dbTopic.User.Email || User.IsInRole("admin"))
             {
-                var dbtopic = session.Query<Topic>().Single(x => x.Id == id);
-                dbtopic.Name = topic.Name;
-                dbtopic.IsClosed = topic.IsClosed;
-                if (User.Identity.Name == dbtopic.User.Email || User.IsInRole("admin"))
-                {
-                    using (ITransaction transaction = session.BeginTransaction())
-                    {
-                        session.SaveOrUpdate(dbtopic);
-                        transaction.Commit();
-                        return NoContent();
-                    }
-                }
+                if(topics.Update(topic))
+                    return NoContent();
+                return BadRequest();
             }
             return StatusCode(403);
         }

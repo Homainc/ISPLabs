@@ -11,15 +11,18 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using ISPLabs.Repositories.Interfaces;
+using System.Data;
+using System.Text;
 
 namespace ISPLabs.Controllers
 {
     public class AccountController : Controller
     {
-        private NHibernateHelper nHibernateHelper;
-        public AccountController(NHibernateHelper nHibernateHelper)
+        private IUserRepository users;
+        public AccountController(IUserRepository users)
         {
-            this.nHibernateHelper = nHibernateHelper;
+            this.users = users;
         }
         [HttpGet]
         public IActionResult Login()
@@ -32,17 +35,14 @@ namespace ISPLabs.Controllers
         {
             if (ModelState.IsValid)
             {
-                using(ISession session = nHibernateHelper.OpenSession())
+                var user = users.Login(model.Email, model.Password);
+                if (user != null)
                 {
-                    User user = session.Query<User>().FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
-                    if (user != null)
-                    {
-                        await Authenticate(user);
-                        return RedirectToAction("Index", "Home");
-                    }
-                    else
-                        ModelState.AddModelError("", "Incorrect login/password");
+                    await Authenticate(user);
+                    return RedirectToAction("Index", "Home");
                 }
+                else
+                    ModelState.AddModelError("", "Incorrect login/password");
             }
             return View(model);
         }
@@ -57,31 +57,24 @@ namespace ISPLabs.Controllers
         {
             if (ModelState.IsValid)
             {
-                using(ISession session = nHibernateHelper.OpenSession())
+                try
                 {
-                    User user = session.Query<User>().FirstOrDefault(u => u.Email == model.Email || u.Login == model.Login);
-                    if (user == null)
+                    var u = new User
                     {
-                        using (ITransaction transaction = session.BeginTransaction())
-                        {
-                            var userRole = session.Query<Role>().FirstOrDefault(x => x.Name == "user");
-                            var aUser = new User
-                            {
-                                Role = userRole,
-                                Login = model.Login,
-                                Email = model.Email,
-                                Password = model.Password,
-                                RegistrationDate = DateTime.Now
-                            };
-                            session.SaveOrUpdate(aUser);
-                            transaction.Commit();
-                            await Authenticate(aUser);
-                        }
-                        return RedirectToAction("Index", "Home");
-                    }
-                    else
-                        ModelState.AddModelError("", "Incorrect password/login");
+                        Login = model.Login,
+                        Email = model.Email,
+                        Password = model.Password,
+                        RegistrationDate = DateTime.Now
+                    };
+                    u = users.Append(u);
+                    await Authenticate(u);
+                    return RedirectToAction("Index", "Home");
                 }
+                catch(Exception)
+                {
+                    ModelState.AddModelError("", "Incorrect login/email");
+                }
+                 
             }
             return View(model);
         }

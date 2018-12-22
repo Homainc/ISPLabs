@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NHibernate;
 using ISPLabs.Services;
 using ISPLabs.Models.API;
 using ISPLabs.Models;
+using ISPLabs.Repositories.Interfaces;
 
 namespace ISPLabs.Controllers
 {
@@ -16,59 +14,36 @@ namespace ISPLabs.Controllers
     public class PartitionController : ControllerBase
     {
         private NHibernateHelper nHibernateHelper;
-        public PartitionController(NHibernateHelper nHibernateHelper)
+        private IPartitionRepository partitions;
+        public PartitionController(NHibernateHelper nHibernateHelper, IPartitionRepository partitions)
         {
             this.nHibernateHelper = nHibernateHelper;
+            this.partitions = partitions;
         }
+
         [HttpGet]
-        public ActionResult<ISet<PartitionAPIModel>> GetAll()
-        {
-            using (NHibernate.ISession session = nHibernateHelper.OpenSession())
-            {
-                return session.Query<Partition>().Select(x => new PartitionAPIModel(x)).ToHashSet();
-            }
-        }
+        public ActionResult<ISet<PartitionAPIModel>> GetAll() => partitions.GetAll();
+
         [HttpGet("{id}", Name = "GetPartition")]
-        public ActionResult<PartitionAPIModel> GetById(int id)
-        {
-            using(NHibernate.ISession session = nHibernateHelper.OpenSession())
-            {
-                var part = session.Query<Partition>().Single(x => x.Id == id);
-                return new PartitionAPIModel(part);
-            }
-        }
+        public ActionResult<PartitionAPIModel> GetById(int id) => partitions.GetByIdWithoutChilds(id);
+
         [HttpPost]
         public ActionResult Create(PartitionAPIModel part)
         {
-            using (NHibernate.ISession session = nHibernateHelper.OpenSession())
-            {
-                using (ITransaction transaction = session.BeginTransaction())
-                {
-                    var addedPart = new Partition
-                    {
-                        Name = part.Name
-                    };
-                    session.SaveOrUpdate(addedPart);
-                    transaction.Commit();
-                    var dbPart = session.Query<Partition>().Single(x => x.Name == addedPart.Name);
-                    return CreatedAtRoute("GetPartition", new { id = dbPart.Id }, new PartitionAPIModel(dbPart));
-                }
-            }
+            var dbPart = partitions.Append(part);
+            if (dbPart == null)
+                return BadRequest();
+            return CreatedAtRoute("GetPartition", new { id = dbPart.Id }, dbPart);
+
         }
+
         [HttpPut("{id}")]
         public IActionResult Update(int id, PartitionAPIModel part)
         {
-            using(NHibernate.ISession session = nHibernateHelper.OpenSession())
-            {
-                using(ITransaction transaction = session.BeginTransaction())
-                {
-                    var addedPart = session.Query<Partition>().Single(x => x.Id == id);
-                    addedPart.Name = part.Name;
-                    session.Update(addedPart);
-                    transaction.Commit();
-                    return NoContent();
-                }
-            }
+            part.Id = id;
+            if (partitions.Update(part))
+                return NoContent();
+            return BadRequest();
         }
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)

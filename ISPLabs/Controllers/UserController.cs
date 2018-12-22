@@ -8,6 +8,7 @@ using ISPLabs.Services;
 using NHibernate;
 using ISPLabs.Models.API;
 using Microsoft.AspNetCore.Authorization;
+using ISPLabs.Repositories.Interfaces;
 
 namespace ISPLabs.Controllers
 {
@@ -17,69 +18,51 @@ namespace ISPLabs.Controllers
     public class UserController : Controller
     {
         private NHibernateHelper nHibernateHelper;
-        public UserController(NHibernateHelper nHibernateHelper)
+        private IUserRepository users;
+        private IRoleRepository roles;
+        public UserController(NHibernateHelper nHibernateHelper, IUserRepository users, IRoleRepository roles)
         {
             this.nHibernateHelper = nHibernateHelper;
+            this.users = users;
+            this.roles = roles;
         }
+
         [HttpGet]
-        public ActionResult<ISet<UserAPIModel>> GetAll()
-        {
-            using(NHibernate.ISession session = nHibernateHelper.OpenSession())
-            {
-                return session.Query<User>().Select(x => new UserAPIModel(x)).ToHashSet();
-            }
-        }
+        public ActionResult<ISet<UserAPIModel>> GetAll() => users.GetAll();
+
         [HttpGet("{id}", Name = "GetUser")]
-        public ActionResult<UserAPIModel> GetById(int id)
-        {
-            using (NHibernate.ISession session = nHibernateHelper.OpenSession())
-            {
-                var user = session.Query<User>().Single(x => x.Id == id);
-                if (user == null)
-                    return NotFound();
-                return new UserAPIModel(user);
-            }
-        }
+        public ActionResult<UserAPIModel> GetById(int id) => users.GetById(id);
+
         [HttpPost]
-        public ActionResult Create(UserAPIModel user)
+        public ActionResult Create(UserAPIModel model)
         {
-            using(NHibernate.ISession session = nHibernateHelper.OpenSession())
+            var user = new User
             {
-                using(ITransaction transaction = session.BeginTransaction())
-                {
-                    session.SaveOrUpdate(new User
-                    {
-                        Login = user.Login,
-                        Email = user.Email,
-                        RegistrationDate = user.RegistrationDate,
-                        Role = session.Query<Role>().Single(x => x.Name == user.Role),
-                        Password = user.Password
-                    });
-                    transaction.Commit();
-                    var dbUser = session.Query<User>().Single(x => x.Login == user.Login);
-                    return CreatedAtRoute("GetUser", new { id = dbUser.Id }, new UserAPIModel(dbUser));
-                }
-            }
+                Login = model.Login,
+                Email = model.Email,
+                RegistrationDate = DateTime.Now,
+                Role = roles.GetByName(model.Role),
+                Password = model.Password
+            };
+            user = users.Append(user);
+            return CreatedAtRoute("GetUser", new { id = user.Id }, new UserAPIModel(user));
         }
+
         [HttpPut("{id}")]
-        public IActionResult Update(int id, UserAPIModel user)
+        public IActionResult Update(int id, UserAPIModel model)
         {
-            using(NHibernate.ISession session = nHibernateHelper.OpenSession())
+            var user = new User
             {
-                var u = session.Query<User>().FirstOrDefault(x => x.Id == id);
-                if (u == null)
-                    return NotFound();
-                u.Login = user.Login;
-                u.Email = user.Email;
-                u.Password = user.Password;
-                u.Role = session.Query<Role>().Single(x => x.Name == user.Role);
-                using(ITransaction transaction = session.BeginTransaction())
-                {
-                    session.SaveOrUpdate(u);
-                    transaction.Commit();
-                    return NoContent();
-                }
-            }
+                Id = id,
+                Login = model.Login,
+                Email = model.Email,
+                Role = roles.GetByName(model.Role),
+                Password = model.Password
+            };
+            if(users.Update(user))
+                return NoContent();
+            return BadRequest();
+
         }
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)

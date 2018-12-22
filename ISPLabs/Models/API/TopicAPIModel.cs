@@ -20,7 +20,7 @@ namespace ISPLabs.Models.API
             Name = topic.Name;
             if(verbose)
                 Messages = topic.Messages.Select(x => new MessageAPIModel(x)).ToHashSet();
-            MessagesCount = topic.Messages.Count();
+            MessagesCount = topic.Messages.Count;
             IsClosed = topic.IsClosed;
             var lastmsg = topic.Messages.OrderBy(x => x.Date).LastOrDefault();
             LastActivity = lastmsg == null ? "null" : $"{lastmsg.Date.ToShortDateString()} {lastmsg.Date.ToShortTimeString()}"; 

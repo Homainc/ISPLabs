@@ -53,7 +53,10 @@
                 </div>
                 <div class="col-lg-3">
                     <ul class="mini-menu">
-                        <li class="el-menu"><a style="color: black;" data-toggle="modal" data-target="#new_topic">@Localizer["New topic"]</a></li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="el-menu"><a style="color: black;" data-toggle="modal" data-target="#new_topic">@Localizer["New topic"]</a></li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -68,7 +71,7 @@
                     <a href="/Home/Topic/${topic.id}">${topic.name}</a>
                 </div>
                 <div class="col-lg-3">
-                    <span class="small">@Localizer["Last activity"]: <i>${topic.lastActivity}</i></span>
+                    <span class="small"> <i>${topic.lastActivity}</i></span>
                 </div>
                 <div class="col-lg-2">
                     <span class="small">@Localizer["Messages"]: ${topic.messagesCount}</span>
