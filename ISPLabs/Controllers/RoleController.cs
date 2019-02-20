@@ -15,10 +15,10 @@ namespace ISPLabs.Controllers
     [ApiController]
     public class RoleController : ControllerBase
     {
-        private IRoleRepository roles;
-        public RoleController(IRoleRepository roles) => this.roles = roles;
+        //private IRoleRepository roles;
+        //public RoleController(IRoleRepository roles) => this.roles = roles;
 
-        [HttpGet]
-        public ActionResult<ISet<RoleAPIModel>> GetAll() => roles.GetAll();
+        //[HttpGet]
+        //public ActionResult<ISet<RoleAPIModel>> GetAll() => roles.GetAll();
     }
 }
