@@ -67,7 +67,7 @@ namespace ISPLabs.Controllers
         public IActionResult Test()
         {
             //return Content(SQLFileReader.ReadSQLFile("create_tables.sql"));
-            OracleHelper.test();
+            new OracleHelper().InitDB();
             return Content("");
         }
     }

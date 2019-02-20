@@ -9,7 +9,7 @@ namespace ISPLabs.Services
 {
     public class OracleHelper
     {
-        public static void test()
+        public void InitDB()
         {
             var conn = GetDBConnection();
             conn.Open();
@@ -18,6 +18,7 @@ namespace ISPLabs.Services
                 if (!GetResultFromBoolFunc(conn, "EXIST_TABLE"))
                 {
                     CallSQLScript(conn, "create_tables");
+                    CallSQLScript(conn, "role");
                 }
             }
             finally
@@ -41,7 +42,7 @@ namespace ISPLabs.Services
             return conn;
         }
 
-        public static bool GetResultFromBoolFunc(OracleConnection conn, string funcCall)
+        public bool GetResultFromBoolFunc(OracleConnection conn, string funcCall)
         {
             if (conn.State != ConnectionState.Open)
                 throw new Exception("Connection not open");
@@ -57,7 +58,7 @@ namespace ISPLabs.Services
             return result != 0;
         }
 
-        public static void CallSQLScript(OracleConnection conn, string scriptFileName)
+        public void CallSQLScript(OracleConnection conn, string scriptFileName)
         {
             if (conn.State != ConnectionState.Open)
                 throw new Exception("Connection not open");
@@ -67,21 +68,30 @@ namespace ISPLabs.Services
             string currLine = "";
             var begins = new Stack<bool>();
             var oneCmd = new StringBuilder();
+            var is_is = false;
             try
             {
                 foreach (string line in script)
                 {
                     lineNum++;
                     currLine = line.Trim();
+                    if (currLine == "IS" || currLine == "DECLARE")
+                        is_is = true;
                     if (currLine == "BEGIN")
+                    {
                         begins.Push(true);
+                        is_is = false;
+                    }
                     if (currLine == "END;")
                         begins.Pop();
                     if (currLine == "/")
                         continue;
-                    if (currLine.EndsWith(";") && begins.Count == 0)
+                    if (currLine.EndsWith(";") && begins.Count == 0 && !is_is)
                     {
-                        oneCmd.Append(currLine.Substring(0, currLine.Length - 1));
+                        if(currLine.EndsWith("END;"))
+                            oneCmd.Append(currLine);
+                        else
+                            oneCmd.Append(currLine.Substring(0, currLine.Length - 1));
                         cmd.CommandText = oneCmd.ToString();
                         cmd.ExecuteNonQuery();
                         oneCmd.Clear();
@@ -92,7 +102,7 @@ namespace ISPLabs.Services
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error at line {lineNum}: {ex.Message}");
+                throw new Exception($"Error at line {lineNum}: {ex.Message}\n{oneCmd}");
             }
         }
     }
