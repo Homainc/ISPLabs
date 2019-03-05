@@ -35,7 +35,7 @@ namespace ISPLabs.Services
             var port = 1521;
             var sid = "xe";
             var password = "1234";
-            var user = "system";
+            var user = "forum";
             string connStr = "Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = "
                  + host + ")(PORT = " + port + "))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = "
                  + sid + ")));Password=" + password + ";User ID=" + user;
