@@ -9,12 +9,13 @@ namespace ISPLabs.Services
 {
     public class OracleHelper
     {
-        public void InitDB()
+        public static void InitDB()
         {
             var conn = GetDBConnection();
             conn.Open();
             try
             {
+                CallSQLScript(conn, "func_exist_table");
                 if (!GetResultFromBoolFunc(conn, "EXIST_TABLE"))
                 {
                     CallSQLScript(conn, "create_tables");
@@ -42,7 +43,7 @@ namespace ISPLabs.Services
             return conn;
         }
 
-        public bool GetResultFromBoolFunc(OracleConnection conn, string funcCall)
+        public static bool GetResultFromBoolFunc(OracleConnection conn, string funcCall)
         {
             if (conn.State != ConnectionState.Open)
                 throw new Exception("Connection not open");
@@ -58,7 +59,7 @@ namespace ISPLabs.Services
             return result != 0;
         }
 
-        public void CallSQLScript(OracleConnection conn, string scriptFileName)
+        public static void CallSQLScript(OracleConnection conn, string scriptFileName)
         {
             if (conn.State != ConnectionState.Open)
                 throw new Exception("Connection not open");

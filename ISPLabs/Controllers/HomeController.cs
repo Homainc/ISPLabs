@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using ISPLabs.Models;
-using NHibernate;
 using ISPLabs.Services;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
-using ISPLabs.Repositories.Interfaces;
 
 namespace ISPLabs.Controllers
 {
@@ -66,8 +62,7 @@ namespace ISPLabs.Controllers
         }
         public IActionResult Test()
         {
-            //return Content(SQLFileReader.ReadSQLFile("create_tables.sql"));
-            new OracleHelper().InitDB();
+            OracleHelper.InitDB();
             return Content("");
         }
     }
