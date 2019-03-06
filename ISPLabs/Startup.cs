@@ -10,8 +10,6 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using ISPLabs.Hubs;
-using ISPLabs.Repositories.Interfaces;
-using ISPLabs.Repositories;
 
 namespace ISPLabs
 {
@@ -33,18 +31,11 @@ namespace ISPLabs
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            string connection = @"Server=(localdb)\ProjectsV13; initial catalog=ForumDB; Integrated Security=SSPI;";
-            //services.AddTransient<IUserRepository, UserRepository>(provider => new UserRepository(connection));
-            //services.AddTransient<IRoleRepository, RoleRepository>(provider => new RoleRepository(connection));
-            //services.AddTransient<ICategoryRepository, CategoryRepository>(provider => new CategoryRepository(connection));
-            //services.AddTransient<ITopicRepository, TopicRepository>(provider => new TopicRepository(connection));
-            //services.AddTransient<IForumMessageRepository, ForumMessageRepository>(provider => new ForumMessageRepository(connection));
-            //services.AddTransient<IPartitionRepository, PartitionRepository>(provider => new PartitionRepository(connection));
             services.AddTransient<NHibernateHelper>();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => //CookieAuthenticationOptions
                 {
-                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                    options.LoginPath = new PathString("/Account/Login");
                 });
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddSignalR();

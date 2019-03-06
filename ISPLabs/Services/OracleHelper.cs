@@ -65,6 +65,7 @@ namespace ISPLabs.Services
             conn.Open();
             try
             {
+                CallSQLScript(conn, "GET_CATEGORY");
                 CallSQLScript(conn, "GET_ROLE_BY_NAME");
                 CallSQLScript(conn, "REGISTRATION");
                 CallSQLScript(conn, "TABLE_EXIST");

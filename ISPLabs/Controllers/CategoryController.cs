@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ISPLabs.Services;
 using Oracle.ManagedDataAccess.Client;
+using System.Threading.Tasks;
+using ISPLabs.Models;
+using ISPLabs.Manager;
 
 namespace ISPLabs.Controllers
 {
@@ -9,11 +12,13 @@ namespace ISPLabs.Controllers
     public class CategoryController : ControllerBase
     {
         private OracleConnection _conn;
+        private CategoryManager _categories;
 
         public CategoryController()
         {
             _conn = OracleHelper.GetDBConnection();
             _conn.Open();
+            _categories = new CategoryManager(_conn);
         }
 
         //[HttpGet]
@@ -21,8 +26,8 @@ namespace ISPLabs.Controllers
             
         //}
 
-        //[HttpGet("{id}", Name = "GetCategory")]
-        //public ActionResult<CategoryAPIModel> GetById(int id) => categories.GetById(id);
+        [HttpGet("{id}", Name = "GetCategory")]
+        public async Task<Category> GetById(int id) => await _categories.GetByIdAsync(id);
 
         //[Authorize(Roles = "admin")]
         //[HttpPost]

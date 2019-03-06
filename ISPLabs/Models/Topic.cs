@@ -13,6 +13,9 @@ namespace ISPLabs.Models
         public int CategoryId { get; set; }
         public ICollection<ForumMessage> Messages { get; set; }
         public User User { get; set; }
+        public int UserId { get; set; }
+        public int MessagesCount { get; set; }
+        public DateTime LastActivity { get; set; }
 
         public Topic()
         {

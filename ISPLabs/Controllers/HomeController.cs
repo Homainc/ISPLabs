@@ -5,26 +5,25 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Oracle.ManagedDataAccess.Client;
+using System.Data;
+using ISPLabs.Models;
+using System.Collections.Generic;
+using ISPLabs.Manager;
+using Oracle.ManagedDataAccess.Types;
+using System.Threading.Tasks;
 
 namespace ISPLabs.Controllers
 {
     public class HomeController : Controller
     {
-        //private ICategoryRepository categories;
-        //private ITopicRepository topics;
-        //public HomeController(ICategoryRepository categories, ITopicRepository topics)
-        //{
-        //    this.categories = categories;
-        //    this.topics = topics;
-        //}
         private OracleConnection _conn;
+        private CategoryManager _categories;
 
         public HomeController()
         {
             _conn = OracleHelper.GetDBConnection();
             _conn.Open();
         }
-        
 
         [HttpPost]
         public IActionResult SetLanguage(string culture, string returnUrl)
@@ -42,8 +41,7 @@ namespace ISPLabs.Controllers
 
         public IActionResult Category(int id)
         {
-            //ViewBag.catId = id;
-            //ViewBag.catName = categories.GetByIdWithoutChilds(id).Name;
+            ViewBag.catId = id;
             return View();
         }
 
@@ -69,11 +67,13 @@ namespace ISPLabs.Controllers
             //}
             return StatusCode(403);
         }
+
         public IActionResult Test()
         {
             OracleHelper.InitFunctions();
             return Content("");
         }
+
         ~HomeController()
         {
             _conn.Close();
