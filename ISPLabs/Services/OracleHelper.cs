@@ -68,6 +68,8 @@ namespace ISPLabs.Services
                 CallSQLScript(conn, "func_exist_table");
                 CallSQLScript(conn, "GET_USERS");
                 CallSQLScript(conn, "get_partitions_eager");
+                CallSQLScript(conn, "LOGIN");
+                CallSQLScript(conn, "REGISTRATION");
             }
             finally
             {

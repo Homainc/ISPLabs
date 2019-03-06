@@ -4,6 +4,8 @@ using ISPLabs.Services;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using Oracle.ManagedDataAccess.Client;
+using System.Data;
 
 namespace ISPLabs.Controllers
 {
@@ -16,6 +18,14 @@ namespace ISPLabs.Controllers
         //    this.categories = categories;
         //    this.topics = topics;
         //}
+        private OracleConnection _conn;
+
+        public HomeController()
+        {
+            _conn = OracleHelper.GetDBConnection();
+            _conn.Open();
+        }
+        
 
         [HttpPost]
         public IActionResult SetLanguage(string culture, string returnUrl)
@@ -62,15 +72,18 @@ namespace ISPLabs.Controllers
         }
         public IActionResult Test()
         {
-            try
-            {
-                OracleHelper.InitFunctions();
-                return Content("OK");
-            }
-            catch(Exception ex)
-            {
-                return Content(ex.Message);
-            }
+            OracleCommand cmd = new OracleCommand("check_f", _conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.BindByName = true;
+            cmd.Parameters.Add("result", OracleDbType.Int32).Direction = ParameterDirection.ReturnValue;
+            cmd.ExecuteNonQuery();
+            var r = cmd.Parameters["result"].Value.ToString();
+            return Content(r);
+        }
+        ~HomeController()
+        {
+            _conn.Close();
+            _conn.Dispose();
         }
     }
 }

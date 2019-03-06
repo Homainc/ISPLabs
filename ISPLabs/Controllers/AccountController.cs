@@ -9,36 +9,55 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Oracle.ManagedDataAccess.Client;
+using ISPLabs.Services;
+using System.Data;
 
 namespace ISPLabs.Controllers
 {
     public class AccountController : Controller
     {
-        //private IUserRepository users;
-        public AccountController(/*IUserRepository users*/)
+        private OracleConnection _conn;
+
+        public AccountController()
         {
-            //this.users = users;
+            _conn = OracleHelper.GetDBConnection();
+            _conn.Open();
         }
+
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    var user = users.Login(model.Email, model.Password);
-            //    if (user != null)
-            //    {
-            //        await Authenticate(user);
-            //        return RedirectToAction("Index", "Home");
-            //    }
-            //    else
-            //        ModelState.AddModelError("", "Incorrect login/password");
-            //}
+            if (ModelState.IsValid) {
+                OracleCommand cmd = new OracleCommand("login", _conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+                OracleParameter result = new OracleParameter("result", OracleDbType.Boolean);
+                result.Direction = ParameterDirection.ReturnValue;
+                cmd.Parameters.Add(result);
+                cmd.Parameters.Add("pass_login", OracleDbType.Varchar2, 255).Value = "spritefok@gmail.com";
+                cmd.Parameters.Add("pass_password", OracleDbType.Varchar2, 255).Value = "123456";
+                OracleParameter errorMsg = new OracleParameter("er", OracleDbType.Varchar2);
+                errorMsg.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(errorMsg);
+                cmd.ExecuteNonQuery();
+                string r = "";
+                if (result.Value != DBNull.Value)
+                {
+                    r = result.Value.GetType().ToString();
+                }
+                return Content(r);
+                //await Authenticate(user);
+                //return RedirectToAction("Index", "Home");
+                //ModelState.AddModelError("", "Incorrect login/password");
+            }
             return View(model);
         }
         [HttpGet]
@@ -89,6 +108,12 @@ namespace ISPLabs.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
+        }
+
+        ~AccountController()
+        {
+            _conn.Close();
+            _conn.Dispose();
         }
     }
 }

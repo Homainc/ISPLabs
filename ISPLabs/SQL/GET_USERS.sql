@@ -7,7 +7,8 @@ BEGIN
     login AS USER_LOGIN,
     email AS USER_EMAIL,
     registration_date AS USER_REG_DATE,
-    role_id AS USER_ROLE_ID
+    USER_ROLE.id AS ROLE_ID,
+	USER_ROEL.name as ROLE_NAME
     from FORUM_USER
     INNER JOIN USER_ROLE ON FORUM_USER.ROLE_ID = USER_ROLE.ID;
 END;

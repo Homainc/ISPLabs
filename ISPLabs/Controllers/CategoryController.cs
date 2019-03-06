@@ -7,6 +7,7 @@ using ISPLabs.Models.API;
 using NHibernate;
 using Microsoft.AspNetCore.Authorization;
 using ISPLabs.Repositories.Interfaces;
+using Oracle.ManagedDataAccess.Client;
 
 namespace ISPLabs.Controllers
 {
@@ -14,15 +15,18 @@ namespace ISPLabs.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        //private ICategoryRepository categories;
-        //public CategoryController(NHibernateHelper nHibernateHelper, ICategoryRepository categories)
-        //{
-        //    this.categories = categories;
-        //}
+        private OracleConnection _conn;
+
+        public CategoryController()
+        {
+            _conn = OracleHelper.GetDBConnection();
+            _conn.Open();
+        }
 
         //[HttpGet]
-        //public ActionResult<ISet<CategoryAPIModel>> GetAll() => 
-        //    categories.GetAll().Select(x => new CategoryAPIModel(x, false)).ToHashSet();
+        //public ActionResult<ISet<CategoryAPIModel>> GetAll() {
+            
+        //}
 
         //[HttpGet("{id}", Name = "GetCategory")]
         //public ActionResult<CategoryAPIModel> GetById(int id) => categories.GetById(id);
@@ -54,5 +58,10 @@ namespace ISPLabs.Controllers
         //        return NoContent();
         //    return BadRequest();
         //}
+        ~CategoryController()
+        {
+            _conn.Close();
+            _conn.Dispose();
+        }
     }
 }
