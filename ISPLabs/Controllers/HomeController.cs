@@ -72,18 +72,8 @@ namespace ISPLabs.Controllers
         }
         public IActionResult Test()
         {
-            OracleCommand cmd = new OracleCommand("login", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
-            cmd.Parameters.Add("result", OracleDbType.Int32).Direction = ParameterDirection.ReturnValue;
-            cmd.Parameters.Add("pass_login", OracleDbType.Varchar2, 255).Value = "spritefok";
-            cmd.Parameters.Add("pass_password", OracleDbType.Varchar2, 255).Value = "12345";
-            OracleParameter errorMsg = new OracleParameter("er", OracleDbType.Varchar2, 255);
-            errorMsg.Direction = ParameterDirection.Output;
-            cmd.Parameters.Add(errorMsg);
-            cmd.ExecuteNonQuery();
-            var r = Int32.Parse(cmd.Parameters["result"].Value.ToString());
-            return Content(r.ToString());
+            OracleHelper.InitFunctions();
+            return Content("");
         }
         ~HomeController()
         {

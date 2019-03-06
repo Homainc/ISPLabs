@@ -12,17 +12,21 @@ using Microsoft.AspNetCore.Authorization;
 using Oracle.ManagedDataAccess.Client;
 using ISPLabs.Services;
 using System.Data;
+using System.Text;
+using ISPLabs.Manager;
 
 namespace ISPLabs.Controllers
 {
     public class AccountController : Controller
     {
         private OracleConnection _conn;
+        private UserManager _users;
 
         public AccountController()
         {
             _conn = OracleHelper.GetDBConnection();
             _conn.Open();
+            _users = new UserManager(_conn);
         }
 
         [HttpGet]
@@ -36,34 +40,24 @@ namespace ISPLabs.Controllers
         public async Task<IActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid) {
-                OracleCommand cmd = new OracleCommand("login", _conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.BindByName = true;
-                cmd.Parameters.Add("result", OracleDbType.Int32).Direction = ParameterDirection.ReturnValue;
-                cmd.Parameters.Add("pass_login", OracleDbType.Varchar2, 255).Value = "spritefok@gmail.com";
-                cmd.Parameters.Add("pass_password", OracleDbType.Varchar2, 255).Value = "123456";
-                OracleParameter errorMsg = new OracleParameter("er", OracleDbType.Varchar2);
-                errorMsg.Direction = ParameterDirection.Output;
-                cmd.Parameters.Add(errorMsg);
-                cmd.ExecuteNonQuery();
-                var result = Int32.Parse(cmd.Parameters["result"].Value.ToString());
-                
-                if(result == 1)
+                string error;
+                if (_users.Login(model.Email, model.Password, out error))
                 {
-                    //get user
-                    //auth
+                    await Authenticate(await _users.GetByEmailAsync(model.Email));
+                    return RedirectToAction("Index", "Home");
                 }
-                //await Authenticate(user);
-                //return RedirectToAction("Index", "Home");
-                //ModelState.AddModelError("", "Incorrect login/password");
+                else
+                    ModelState.AddModelError("", error);
             }
             return View(model);
         }
+
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterModel model)
@@ -96,7 +90,7 @@ namespace ISPLabs.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role?.Name)
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name)
             };
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
                 ClaimsIdentity.DefaultRoleClaimType);
