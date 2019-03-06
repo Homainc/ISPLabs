@@ -67,6 +67,22 @@ namespace ISPLabs.Manager
             return cmd.Parameters["result"].Value.ToString() == "1";
         }
 
+        public bool Registration(User user, out string error)
+        {
+            OracleCommand cmd = new OracleCommand("registration", _conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.BindByName = true;
+            cmd.Parameters.Add("result", OracleDbType.Int32).Direction = ParameterDirection.ReturnValue;
+            cmd.Parameters.Add("pass_email", OracleDbType.Varchar2, 255).Value = user.Email;
+            cmd.Parameters.Add("pass_password", OracleDbType.Varchar2, 255).Value = user.Password;
+            cmd.Parameters.Add("pass_login", OracleDbType.Varchar2, 255).Value = user.Login;
+            cmd.Parameters.Add("pass_role_id", OracleDbType.Int32).Value = user.Role.Id;
+            cmd.Parameters.Add("err", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            cmd.ExecuteNonQuery();
+            error = cmd.Parameters["err"].Value.ToString();
+            return cmd.Parameters["result"].Value.ToString() == "1";
+        }
+
         public static User Convert(OracleParameterCollection item, bool isSecure = false)
         {
             var user = new User();

@@ -17,19 +17,18 @@ namespace ISPLabs.Controllers
     {
         private OracleConnection _conn;
         private UserManager _users;
+        private RoleManager _roles;
 
         public AccountController()
         {
             _conn = OracleHelper.GetDBConnection();
             _conn.Open();
             _users = new UserManager(_conn);
+            _roles = new RoleManager(_conn);
         }
 
         [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
+        public IActionResult Login() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -49,36 +48,30 @@ namespace ISPLabs.Controllers
         }
 
         [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
+        public IActionResult Register() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterModel model)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    try
-            //    {
-            //        var u = new User
-            //        {
-            //            Login = model.Login,
-            //            Email = model.Email,
-            //            Password = model.Password,
-            //            RegistrationDate = DateTime.Now
-            //        };
-            //        u = users.Append(u);
-            //        await Authenticate(u);
-            //        return RedirectToAction("Index", "Home");
-            //    }
-            //    catch(Exception)
-            //    {
-            //        ModelState.AddModelError("", "Incorrect login/email");
-            //    }
-                 
-            //}
+            if (ModelState.IsValid)
+            {
+                var user = new User
+                {
+                    Login = model.Login,
+                    Email = model.Email,
+                    Password = model.Password,
+                    Role = await _roles.GetByNameAsync("user")
+                };
+                string error;
+                if (_users.Registration(user, out error))
+                {
+                    await Authenticate(user);
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                    ModelState.AddModelError("", error);
+            }
             return View(model);
         }
         private async Task Authenticate(User user)
