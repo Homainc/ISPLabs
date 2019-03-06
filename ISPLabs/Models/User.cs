@@ -9,32 +9,33 @@ namespace ISPLabs.Models
 {
     public class User
     {
-        public virtual int Id { get; set; }
-        public virtual string Login { get; set; }
-        public virtual string Email { get; set; }
-        public virtual string Password { get; set; }
-        public virtual DateTime RegistrationDate { get; set; }
-        public virtual Role Role { get; set; }
-        public virtual ISet<Topic> Topics { get; set; }
-        public virtual ISet<ForumMessage> Messages { get; set; }
+        public int Id { get; set; }
+        public string Login { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public DateTime RegistrationDate { get; set; }
+        public Role Role { get; set; }
+        public int RoleId { get; set; } 
+        public ICollection<Topic> Topics { get; set; }
+        public ICollection<ForumMessage> Messages { get; set; }
+
         public User()
         {
-            Topics = new HashSet<Topic>();
-            Messages = new HashSet<ForumMessage>();
+            Topics = new List<Topic>();
+            Messages = new List<ForumMessage>();
+            Role = new Role();
         }
-    }
-    public class UserMap : ClassMap<User>
-    {
-        public UserMap()
+
+        public User(int id, string login, string email, DateTime regDate, Role role)
         {
-            Id(x => x.Id);
-            Map(x => x.Login).Unique();
-            Map(x => x.Email).Unique();
-            Map(x => x.Password);
-            Map(x => x.RegistrationDate);
-            References(x => x.Role).Cascade.SaveUpdate();
-            HasMany(x => x.Topics).Cascade.All().Inverse();
-            HasMany(x => x.Messages).Cascade.All().Inverse();
+            this.Id = id;
+            this.Login = login;
+            this.Email = email;
+            this.RegistrationDate = regDate;
+            this.Role = role;
+            this.RoleId = role.Id;
+            this.Topics = new List<Topic>();
+            this.Messages = new List<ForumMessage>();
         }
     }
 }

@@ -59,6 +59,23 @@ namespace ISPLabs.Services
             return result != 0;
         }
 
+        public static void InitFunctions()
+        {
+            var conn = GetDBConnection();
+            conn.Open();
+            try
+            {
+                CallSQLScript(conn, "func_exist_table");
+                CallSQLScript(conn, "GET_USERS");
+                CallSQLScript(conn, "get_partitions_eager");
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
+        }
+
         public static void CallSQLScript(OracleConnection conn, string scriptFileName)
         {
             if (conn.State != ConnectionState.Open)
@@ -76,20 +93,20 @@ namespace ISPLabs.Services
                 {
                     lineNum++;
                     currLine = line.Trim();
-                    if (currLine == "IS" || currLine == "DECLARE")
+                    if (currLine.ToUpper() == "IS" || currLine.ToUpper() == "DECLARE" || currLine.ToUpper() == "AS")
                         is_is = true;
-                    if (currLine == "BEGIN")
+                    if (currLine.ToUpper() == "BEGIN")
                     {
                         begins.Push(true);
                         is_is = false;
                     }
-                    if (currLine == "END;")
+                    if (currLine.ToUpper() == "END;")
                         begins.Pop();
                     if (currLine == "/")
                         continue;
                     if (currLine.EndsWith(";") && begins.Count == 0 && !is_is)
                     {
-                        if(currLine.EndsWith("END;"))
+                        if(currLine.ToUpper().EndsWith("END;"))
                             oneCmd.Append(currLine);
                         else
                             oneCmd.Append(currLine.Substring(0, currLine.Length - 1));

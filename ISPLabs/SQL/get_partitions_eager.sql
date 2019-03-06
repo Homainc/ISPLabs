@@ -1,4 +1,5 @@
-create or replace procedure get_partition_eager(resultItems out nocopy sys_refcursor) is
+create or replace procedure get_partition_eager(resultItems out nocopy sys_refcursor) 
+IS
 begin
     open resultItems for
     select

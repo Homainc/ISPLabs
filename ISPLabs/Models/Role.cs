@@ -7,24 +7,21 @@ using System.Threading.Tasks;
 
 namespace ISPLabs.Models
 {
-    [DataContract]
     public class Role
     {
-        public virtual int Id { get; set; }
-        public virtual string Name { get; set; }
-        public virtual ISet<User> Users { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public ICollection<User> Users { get; set; }
+
         public Role()
         {
-            Users = new HashSet<User>();
+            Users = new List<User>();
         }
-    }
-    public class RoleMap : ClassMap<Role>
-    {
-        public RoleMap()
+
+        public Role(int id, string name) : this()
         {
-            Id(x => x.Id);
-            Map(x => x.Name);
-            HasMany(x => x.Users).Inverse();
+            this.Id = id;
+            this.Name = name;
         }
     }
 }

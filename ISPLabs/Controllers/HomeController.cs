@@ -62,8 +62,15 @@ namespace ISPLabs.Controllers
         }
         public IActionResult Test()
         {
-            OracleHelper.InitDB();
-            return Content("");
+            try
+            {
+                OracleHelper.InitFunctions();
+                return Content("OK");
+            }
+            catch(Exception ex)
+            {
+                return Content(ex.Message);
+            }
         }
     }
 }
