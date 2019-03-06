@@ -1,15 +1,14 @@
-CREATE OR REPLACE FUNCTION DELETE_CATEGORY(
+CREATE OR REPLACE FUNCTION DELETE_PARTITION(
     P_ID IN NUMBER,
     ER OUT VARCHAR2)
     RETURN NUMBER
 AS
 BEGIN
-    DELETE from FORUM_CATEGORY
+    DELETE from FORUM_PARTITION
     WHERE ID = P_ID;
     RETURN 1;
 EXCEPTION
     WHEN OTHERS THEN
-        ER := 'Delete failed for category';
+        ER := 'Delete failed for forum partition';
     RETURN 0;
 END;
-    
