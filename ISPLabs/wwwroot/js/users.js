@@ -18,29 +18,8 @@ function getData() {
         url: uri,
         cache: false,
         success: function (data) {
-            const tBody = $("#users");
-            const delicon = "/images/delete.png"
-            const editicon = "/images/edit.png"
-            $(tBody).empty();
-            getCount(data.length);
-            $.each(data, function (key, item) {
-                const tr = $("<tr></tr>")
-                    .append($("<th scope='row'></th>").text(item.id))
-                    .append($("<td></td>").text(item.role))
-                    .append($("<td></td>").text(item.login))
-                    .append($("<td></td>").text(item.email))
-                    .append($("<td></td>").text(item.password))
-                    .append($("<td></td>").text(item.registrationDate))
-                    .append($("<td></td>")
-                        .append($("<button type='button' class='btn btn-light clear' data-toggle='modal' data-target='#edit_user' data-user=" + item.id + "></button>")
-                            .append($("<img src=" + editicon + " height = '20' width = '20' />")))
-                        .append($("<button type='button' class='btn btn-light clear' data-toggle='modal' data-target='#request_delete' data-user=" + item.login + "></button>")
-                            .attr("data-id", item.id)
-                            .append($("<img src=" + delicon + " height = '20' width = '20' />")))
-                    );
-                tr.appendTo(tBody);
-            });
-            users = data;
+            $("#users").empty();
+            $("#userTmpl").tmpl(data).appendTo($("#users"));
         }
     });
 }
