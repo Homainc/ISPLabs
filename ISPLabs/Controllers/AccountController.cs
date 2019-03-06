@@ -39,21 +39,20 @@ namespace ISPLabs.Controllers
                 OracleCommand cmd = new OracleCommand("login", _conn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.BindByName = true;
-                OracleParameter result = new OracleParameter("result", OracleDbType.Boolean);
-                result.Direction = ParameterDirection.ReturnValue;
-                cmd.Parameters.Add(result);
+                cmd.Parameters.Add("result", OracleDbType.Int32).Direction = ParameterDirection.ReturnValue;
                 cmd.Parameters.Add("pass_login", OracleDbType.Varchar2, 255).Value = "spritefok@gmail.com";
                 cmd.Parameters.Add("pass_password", OracleDbType.Varchar2, 255).Value = "123456";
                 OracleParameter errorMsg = new OracleParameter("er", OracleDbType.Varchar2);
                 errorMsg.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(errorMsg);
                 cmd.ExecuteNonQuery();
-                string r = "";
-                if (result.Value != DBNull.Value)
+                var result = Int32.Parse(cmd.Parameters["result"].Value.ToString());
+                
+                if(result == 1)
                 {
-                    r = result.Value.GetType().ToString();
+                    //get user
+                    //auth
                 }
-                return Content(r);
                 //await Authenticate(user);
                 //return RedirectToAction("Index", "Home");
                 //ModelState.AddModelError("", "Incorrect login/password");
