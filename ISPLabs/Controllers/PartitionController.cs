@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using NHibernate;
+﻿using ISPLabs.Models;
 using ISPLabs.Services;
-using ISPLabs.Models.API;
-using ISPLabs.Models;
-using ISPLabs.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Oracle.ManagedDataAccess.Client;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace ISPLabs.Controllers
 {
@@ -13,16 +13,48 @@ namespace ISPLabs.Controllers
     [ApiController]
     public class PartitionController : ControllerBase
     {
-        //private NHibernateHelper nHibernateHelper;
-        //private IPartitionRepository partitions;
-        //public PartitionController(NHibernateHelper nHibernateHelper, IPartitionRepository partitions)
-        //{
-        //    this.nHibernateHelper = nHibernateHelper;
-        //    this.partitions = partitions;
-        //}
+        private OracleConnection _conn;
 
-        //[HttpGet]
-        //public ActionResult<ISet<PartitionAPIModel>> GetAll() => partitions.GetAll();
+        public PartitionController()
+        {
+            _conn = OracleHelper.GetDBConnection();
+            _conn.Open();
+        }
+
+        [HttpGet]
+        public ActionResult<ICollection<Partition>> GetAll()
+        {
+            OracleCommand cmd = new OracleCommand("get_partition_eager", _conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.BindByName = true;
+            OracleParameter resItems = cmd.Parameters.Add("resultItems", OracleDbType.RefCursor);
+            resItems.Direction = ParameterDirection.Output;
+            OracleDataReader reader;
+            Dictionary<int,Partition> dict = new Dictionary<int, Partition>();
+            try
+            {
+                reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var pid = decimal.ToInt32((decimal)reader["partition_id"]);
+                    Partition partition;
+                    if (!dict.TryGetValue(pid, out partition)) {
+                        partition = new Partition(pid, reader["partition_name"] as string);
+                        dict.Add(pid, partition);
+                    }
+                    var cid = decimal.ToInt32((decimal)reader["category_id"]);
+                    var cname = reader["category_name"] as string;
+                    var cdesc = reader["category_description"] as string;
+                    var ctcount = decimal.ToInt32((decimal)reader["topic_count"]);
+                    partition.Categories.Add(new Category(cid, cname, cdesc, ctcount, partition));
+                }
+                return new JsonResult(dict.Values);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(ex.Message);
+            }
+        }
 
         //[HttpGet("{id}", Name = "GetPartition")]
         //public ActionResult<PartitionAPIModel> GetById(int id) => partitions.GetByIdWithoutChilds(id);
@@ -61,5 +93,11 @@ namespace ISPLabs.Controllers
         //        }
         //    }
         //}
+
+        ~PartitionController()
+        {
+            _conn.Clone();
+            _conn.Dispose();
+        }
     }
 }

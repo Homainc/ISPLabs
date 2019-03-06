@@ -8,21 +8,18 @@ namespace ISPLabs.Models
 {
     public class ForumMessage
     {
-        public virtual int Id { get; set; }
-        public virtual string Text { get; set; }
-        public virtual DateTime Date { get; set; }
-        public virtual Topic Topic { get; set; }
-        public virtual User User { get; set; }
-    }
-    public class ForumMessageMap : ClassMap<ForumMessage>
-    {
-        public ForumMessageMap()
+        public int Id { get; set; }
+        public string Text { get; set; }
+        public DateTime Date { get; set; }
+        public Topic Topic { get; set; }
+        public int TopicId { get; set; }
+        public User User { get; set; }
+        public int UserId { get; set; }
+
+        public ForumMessage()
         {
-            Id(x => x.Id);
-            Map(x => x.Text);
-            Map(x => x.Date);
-            References(x => x.Topic).Cascade.SaveUpdate();
-            References(x => x.User).Cascade.SaveUpdate();
+            Topic = new Topic();
+            User = new User();
         }
     }
 }
