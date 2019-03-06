@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using ISPLabs.ViewModels;
-using ISPLabs.Services;
-using ISPLabs.Models;
-using Microsoft.AspNetCore.Authorization;
-using ISPLabs.Models.API;
-using ISPLabs.Repositories.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace ISPLabs.Controllers
 {

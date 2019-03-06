@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Oracle.ManagedDataAccess.Client;
-using System.Data;
 
 namespace ISPLabs.Controllers
 {

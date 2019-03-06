@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using ISPLabs.Models;
 using ISPLabs.Services;
-using Microsoft.AspNetCore.Authorization;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
+using ISPLabs.Manager;
+using System.Threading.Tasks;
 
 namespace ISPLabs.Controllers
 {
@@ -16,42 +16,18 @@ namespace ISPLabs.Controllers
     public class UserController : Controller
     {
         private OracleConnection _conn;
+        private UserManager _users;
 
         public UserController()
         {
             _conn = OracleHelper.GetDBConnection();
             _conn.Open();
+            _users = new UserManager(_conn);
+
         }
 
         [HttpGet]
-        public ActionResult<ICollection<User>> GetAll() {
-            OracleCommand cmd = new OracleCommand("get_users", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
-            OracleParameter resItems = cmd.Parameters.Add("result_users", OracleDbType.RefCursor);
-            resItems.Direction = ParameterDirection.Output;
-            OracleDataReader reader;
-            List<User> list = new List<User>();
-            try
-            {
-                reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    var uId = decimal.ToInt32((decimal)reader["user_id"]);
-                    var uEmail = reader["user_email"] as string;
-                    var uLogin = reader["user_login"] as string;
-                    var uRegDate = (DateTime)reader["user_reg_date"];
-                    var uRId = decimal.ToInt32((decimal)reader["role_id"]);
-                    var uRName = reader["role_name"] as string;
-                    list.Add(new User(uId, uLogin, uEmail, uRegDate, new Role(uRId, uRName)));
-                }
-                return new JsonResult(list);
-            }
-            catch (Exception ex)
-            {
-                return new JsonResult(ex.Message);
-            }
-        }
+        public async Task<ICollection<User>> GetAll() => await _users.GetAllAsync();
 
         //    [HttpGet("{id}", Name = "GetUser")]
         //    public ActionResult<UserAPIModel> GetById(int id) => users.GetById(id);

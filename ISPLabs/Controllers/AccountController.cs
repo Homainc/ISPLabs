@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ISPLabs.Models;
@@ -11,8 +9,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Oracle.ManagedDataAccess.Client;
 using ISPLabs.Services;
-using System.Data;
-using System.Text;
 using ISPLabs.Manager;
 
 namespace ISPLabs.Controllers

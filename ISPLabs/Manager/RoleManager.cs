@@ -1,6 +1,7 @@
 ﻿using ISPLabs.Models;
 using Oracle.ManagedDataAccess.Client;
 using System;
+using System.Data.Common;
 
 namespace ISPLabs.Manager
 {
@@ -15,6 +16,14 @@ namespace ISPLabs.Manager
             var role = new Role();
             role.Id = Int32.Parse(item["role_id"].Value.ToString());
             role.Name = item["role_name"].Value.ToString();
+            return role;
+        }
+
+        public static Role Convert(DbDataReader reader)
+        {
+            var role = new Role();
+            role.Id = Int32.Parse(reader["role_id"].ToString());
+            role.Name = reader["role_name"].ToString();
             return role;
         }
     }

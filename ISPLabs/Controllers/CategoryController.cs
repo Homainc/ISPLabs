@@ -1,12 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ISPLabs.Services;
-using ISPLabs.Models;
-using ISPLabs.Models.API;
-using NHibernate;
-using Microsoft.AspNetCore.Authorization;
-using ISPLabs.Repositories.Interfaces;
 using Oracle.ManagedDataAccess.Client;
 
 namespace ISPLabs.Controllers
