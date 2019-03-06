@@ -15,11 +15,11 @@ namespace ISPLabs.Services
             conn.Open();
             try
             {
-                CallSQLScript(conn, "func_exist_table");
+                CallSQLScript(conn, "TABLE_EXIST");
                 if (!GetResultFromBoolFunc(conn, "EXIST_TABLE"))
                 {
-                    CallSQLScript(conn, "create_tables");
-                    CallSQLScript(conn, "role");
+                    CallSQLScript(conn, "CREATE_TABLES");
+                    CallSQLScript(conn, "INSERT_INIT_ROLES");
                 }
             }
             finally
@@ -65,11 +65,12 @@ namespace ISPLabs.Services
             conn.Open();
             try
             {
-                CallSQLScript(conn, "func_exist_table");
+                CallSQLScript(conn, "TABLE_EXIST");
                 CallSQLScript(conn, "GET_USERS");
-                CallSQLScript(conn, "get_partitions_eager");
+                CallSQLScript(conn, "GET_PARTITIONS_EAGER");
                 CallSQLScript(conn, "LOGIN");
                 CallSQLScript(conn, "REGISTRATION");
+                CallSQLScript(conn, "GET_USER_BY_EMAIL");
             }
             finally
             {
