@@ -36,7 +36,7 @@ function createTopic() {
             contentType: "application/json",
             data: JSON.stringify(topic),
             success: function (result) {
-                $("#new_topic").modal('hide');
+                hideModal("new_topic");
                 getData();
             },
             error: function (xhr, status, error) {

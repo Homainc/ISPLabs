@@ -7,79 +7,78 @@ using NHibernate;
 using ISPLabs.Services;
 using ISPLabs.Models;
 using ISPLabs.Models.API;
+using Oracle.ManagedDataAccess.Client;
+using ISPLabs.Manager;
 
 namespace ISPLabs.Hubs
 {
     public class MessageHub : Hub
     {
-        private NHibernateHelper nHibernateHelper;
-        public MessageHub(NHibernateHelper nHibernateHelper)
+        private OracleConnection _conn;
+        private ForumMessageManager _messages;
+        private UserManager _users;
+
+        public MessageHub()
         {
-            this.nHibernateHelper = nHibernateHelper;
+            _conn = OracleHelper.GetDBConnection();
+            _messages = new ForumMessageManager(_conn);
+            _users = new UserManager(_conn);
         }
+
         [Authorize]
         public async Task Send(string message, int topicId)
         {
-            using (ISession session = nHibernateHelper.OpenSession())
+            var user = await _users.GetByEmailAsync(Context.User.Identity.Name);
+            var msg = new ForumMessage(message, topicId, user.Id);
+            string error;
+            if(_messages.Create(msg, out error))
             {
-                var topic = session.Query<Topic>().Single(x => x.Id == topicId);
-                if (!topic.IsClosed)
-                {
-                    var msg = new ForumMessage
-                    {
-                        User = session.Query<User>().Single(x => x.Email == Context.User.Identity.Name),
-                        Date = DateTime.Now,
-                        Text = message,
-                        Topic = topic,
-                    };
-                    using (ITransaction transaction = session.BeginTransaction())
-                    {
-                        topic.Messages.Add(msg);
-                        session.SaveOrUpdate(msg);
-                        session.SaveOrUpdate(topic);
-                        transaction.Commit();
-                    }
-                    var dbMsg = session.Query<ForumMessage>().Single(x => x.Date == msg.Date);
-                    await Clients.All.SendAsync($"Receive{topicId.ToString()}", new MessageAPIModel(dbMsg));
-                }
+                await Clients.All.SendAsync($"Receive{topicId}", msg);
             }
         }
-        [Authorize]
-        public async Task DeleteMessage(int id)
+
+        //[Authorize]
+        //public async Task DeleteMessage(int id)
+        //{
+        //    using (ISession session = nHibernateHelper.OpenSession())
+        //    {
+        //        var msg = session.Query<ForumMessage>().Single(x => x.Id == id);
+        //        var topicId = msg.Topic.Id;
+        //        if (Context.User.Identity.Name == msg.User.Email || Context.User.IsInRole("admin"))
+        //        {
+        //            using (ITransaction transaction = session.BeginTransaction())
+        //            {
+        //                session.Delete(msg);
+        //                transaction.Commit();
+        //                await Clients.All.SendAsync($"Deleted{topicId}", id);
+        //            }
+        //        }
+        //    }
+        //}
+        //[Authorize]
+        //public async Task EditMessage(int id, string text)
+        //{
+        //    using (ISession session = nHibernateHelper.OpenSession())
+        //    {
+        //        var msg = session.Query<ForumMessage>().Single(x => x.Id == id);
+        //        var topicId = msg.Topic.Id;
+        //        if (Context.User.Identity.Name == msg.User.Email || Context.User.IsInRole("admin"))
+        //        {
+        //            using (ITransaction transaction = session.BeginTransaction())
+        //            {
+        //                msg.Text = text;
+        //                session.SaveOrUpdate(msg);
+        //                transaction.Commit();
+        //                await Clients.All.SendAsync($"Changed{topicId}", id, text);
+        //            }
+        //        }
+        //    }
+        //}
+
+        ~MessageHub()
         {
-            using(ISession session = nHibernateHelper.OpenSession())
-            {
-                var msg = session.Query<ForumMessage>().Single(x => x.Id == id);
-                var topicId = msg.Topic.Id;
-                if (Context.User.Identity.Name == msg.User.Email || Context.User.IsInRole("admin"))
-                {
-                    using(ITransaction transaction = session.BeginTransaction())
-                    {
-                        session.Delete(msg);
-                        transaction.Commit();
-                        await Clients.All.SendAsync($"Deleted{topicId}", id);
-                    }
-                }
-            }
-        }
-        [Authorize]
-        public async Task EditMessage(int id, string text)
-        {
-            using (ISession session = nHibernateHelper.OpenSession())
-            {
-                var msg = session.Query<ForumMessage>().Single(x => x.Id == id);
-                var topicId = msg.Topic.Id;
-                if (Context.User.Identity.Name == msg.User.Email || Context.User.IsInRole("admin"))
-                {
-                    using (ITransaction transaction = session.BeginTransaction())
-                    {
-                        msg.Text = text;
-                        session.SaveOrUpdate(msg);
-                        transaction.Commit();
-                        await Clients.All.SendAsync($"Changed{topicId}", id, text);
-                    }
-                }
-            }
+            _conn.Close();
+            _conn.Dispose();
         }
     }
 }

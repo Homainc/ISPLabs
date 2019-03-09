@@ -32,7 +32,7 @@ namespace ISPLabs.Controllers
         //[HttpGet("{id}", Name = "GetTopic")]
         //public ActionResult<TopicAPIModel> GetById(int id) => topics.GetById(id);
 
-        //[Authorize]
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> Create(NewTopicModel model)
         {
@@ -42,7 +42,7 @@ namespace ISPLabs.Controllers
                 {
                     CategoryId = model.CategoryId,
                     Name = model.Name,
-                    User = await _users.GetByEmailAsync("spritefok@gmail.com"),
+                    User = await _users.GetByEmailAsync(User.Identity.Name),
                     IsClosed = false,
                 };
                 var msg = new ForumMessage(model.InitialText, topic.Id, topic.User.Id);
