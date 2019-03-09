@@ -29,8 +29,14 @@ namespace ISPLabs.Controllers
         //[HttpGet]
         //public ActionResult<ISet<TopicAPIModel>> GetAll() => topics.GetAll();
 
-        //[HttpGet("{id}", Name = "GetTopic")]
-        //public ActionResult<TopicAPIModel> GetById(int id) => topics.GetById(id);
+        [HttpGet("{id}", Name = "GetTopic")]
+        public async Task<ActionResult> GetById(int id)
+        {
+            var topic = await _topics.GetByIdAsync(id);
+            if (topic == null)
+                return BadRequest();
+            return Ok(topic);
+        }
 
         [Authorize]
         [HttpPost]

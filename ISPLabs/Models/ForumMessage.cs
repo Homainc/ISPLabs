@@ -23,6 +23,8 @@ namespace ISPLabs.Models
             Text = text;
             TopicId = topicId;
             UserId = userId;
+            User = new User();
+            Topic = new Topic();
         }
     }
 }

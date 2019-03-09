@@ -5,12 +5,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Oracle.ManagedDataAccess.Client;
-using System.Data;
-using ISPLabs.Models;
-using System.Collections.Generic;
 using ISPLabs.Manager;
-using Oracle.ManagedDataAccess.Types;
-using System.Threading.Tasks;
 
 namespace ISPLabs.Controllers
 {

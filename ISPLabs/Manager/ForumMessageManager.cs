@@ -1,6 +1,8 @@
-﻿using ISPLabs.Models;
+﻿using System;
+using ISPLabs.Models;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
+using System.Data.Common;
 
 namespace ISPLabs.Manager
 {
@@ -28,6 +30,17 @@ namespace ISPLabs.Manager
             }
             error = cmd.Parameters["err"].Value.ToString();
             return false;
+        }
+
+        public static ForumMessage Convert(DbDataReader reader)
+        {
+            var msg = new ForumMessage();
+            msg.Id = Int32.Parse(reader["message_id"].ToString());
+            msg.Text = reader["message_text"].ToString();
+            msg.TopicId = Int32.Parse(reader["topic_id"].ToString());
+            msg.UserId = Int32.Parse(reader["user_id"].ToString());
+            msg.Date = (DateTime)reader["message_date"];
+            return msg;
         }
     }
 }

@@ -2,6 +2,7 @@
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -43,6 +44,30 @@ namespace ISPLabs.Manager
             }
             error = cmd.Parameters["er"].Value.ToString();
             return false;
+        }
+
+        public async Task<Topic> GetByIdAsync(int id)
+        {
+            var cmd = new OracleCommand("get_topic_eager", _conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.BindByName = true;
+            cmd.Parameters.Add("p_id", OracleDbType.Int32).Value = id;
+            cmd.Parameters.Add("topic_name", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("result_messages", OracleDbType.RefCursor).Direction = ParameterDirection.Output;
+            var topic = new Topic { Id = id };
+            using (var reader = await cmd.ExecuteReaderAsync())
+            {
+                if (cmd.Parameters["topic_name"].Value == DBNull.Value)
+                    return null;
+                topic.Name = cmd.Parameters["topic_name"].Value.ToString();
+                while(await reader.ReadAsync())
+                {
+                    var msg = ForumMessageManager.Convert(reader);
+                    msg.User = new User { Login = reader["user_login"].ToString() };
+                    topic.Messages.Add(msg);
+                }
+            }
+            return topic;
         }
 
         public static Topic Convert(DbDataReader reader)

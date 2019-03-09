@@ -21,6 +21,7 @@ namespace ISPLabs.Models
         {
             Messages = new List<ForumMessage>();
             Category = new Category();
+            User = new User();
         }
     }
 }
