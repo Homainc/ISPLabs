@@ -1,8 +1,9 @@
 ﻿const uri = "/api/user";
 let users = null;
+
 function getCount(data) {
     const el = $("#counter");
-    el.text("(" + data + ")");
+    el.text("(" + data.length + ")");
 }
 
 $(document).ready(function () {
@@ -18,7 +19,12 @@ function getData() {
         url: uri,
         cache: false,
         success: function (data) {
+            $.each(data, function (key, item) {
+                let d = new Date(Date.parse(item.registrationDate));
+                item.registrationDate = d.toLocaleString();
+            });
             $("#users").empty();
+            getCount(data);
             $("#userTmpl").tmpl(data).appendTo($("#users"));
         }
     });

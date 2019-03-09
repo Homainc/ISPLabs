@@ -1,10 +1,12 @@
-﻿using ISPLabs.Models;
+﻿using ISPLabs.Manager;
+using ISPLabs.Models;
 using ISPLabs.Services;
 using Microsoft.AspNetCore.Mvc;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace ISPLabs.Controllers
 {
@@ -13,47 +15,17 @@ namespace ISPLabs.Controllers
     public class PartitionController : ControllerBase
     {
         private OracleConnection _conn;
+        private PartitionManager _partitions;
 
         public PartitionController()
         {
             _conn = OracleHelper.GetDBConnection();
             _conn.Open();
+            _partitions = new PartitionManager(_conn);
         }
 
         [HttpGet]
-        public ActionResult<ICollection<Partition>> GetAll()
-        {
-            OracleCommand cmd = new OracleCommand("get_partition_eager", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
-            OracleParameter resItems = cmd.Parameters.Add("resultItems", OracleDbType.RefCursor);
-            resItems.Direction = ParameterDirection.Output;
-            OracleDataReader reader;
-            Dictionary<int,Partition> dict = new Dictionary<int, Partition>();
-            try
-            {
-                reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    var pid = decimal.ToInt32((decimal)reader["partition_id"]);
-                    Partition partition;
-                    if (!dict.TryGetValue(pid, out partition)) {
-                        partition = new Partition(pid, reader["partition_name"] as string);
-                        dict.Add(pid, partition);
-                    }
-                    var cid = decimal.ToInt32((decimal)reader["category_id"]);
-                    var cname = reader["category_name"] as string;
-                    var cdesc = reader["category_description"] as string;
-                    var ctcount = decimal.ToInt32((decimal)reader["topic_count"]);
-                    partition.Categories.Add(new Category(cid, cname, cdesc, ctcount, partition));
-                }
-                return new JsonResult(dict.Values);
-            }
-            catch (Exception ex)
-            {
-                return new JsonResult(ex.Message);
-            }
-        }
+        public async Task<ICollection<Partition>> GetAll() => await _partitions.GetAllAsync();
 
         //[HttpGet("{id}", Name = "GetPartition")]
         //public ActionResult<PartitionAPIModel> GetById(int id) => partitions.GetByIdWithoutChilds(id);

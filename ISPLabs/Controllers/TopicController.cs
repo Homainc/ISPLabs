@@ -1,4 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ISPLabs.Manager;
+using ISPLabs.Models;
+using ISPLabs.Services;
+using ISPLabs.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Oracle.ManagedDataAccess.Client;
+using System;
+using System.Threading.Tasks;
 
 namespace ISPLabs.Controllers
 {
@@ -6,17 +14,18 @@ namespace ISPLabs.Controllers
     [ApiController]
     public class TopicController : Controller
     {
-        //private ICategoryRepository categories;
-        //private ITopicRepository topics;
-        //private IUserRepository users;
-        //private IForumMessageRepository messages;
-        //public TopicController(ICategoryRepository categories, ITopicRepository topics, IUserRepository users, IForumMessageRepository messages)
-        //{
-        //    this.categories = categories;
-        //    this.topics = topics;
-        //    this.users = users;
-        //    this.messages = messages;
-        //}
+        private OracleConnection _conn;
+        private TopicManager _topics;
+        private UserManager _users;
+
+        public TopicController()
+        {
+            _conn = OracleHelper.GetDBConnection();
+            _conn.Open();
+            _topics = new TopicManager(_conn);
+            _users = new UserManager(_conn);
+        }
+
         //[HttpGet]
         //public ActionResult<ISet<TopicAPIModel>> GetAll() => topics.GetAll();
 
@@ -24,30 +33,30 @@ namespace ISPLabs.Controllers
         //public ActionResult<TopicAPIModel> GetById(int id) => topics.GetById(id);
 
         //[Authorize]
-        //[HttpPost]
-        //public ActionResult Create(NewTopicModel model)
-        //{
-        //    var topic = new Topic
-        //    {
-        //        Category = categories.GetByIdWithoutChilds(model.CategoryId),
-        //        Name = model.Name,
-        //        Date = DateTime.Now,
-        //        User = users.GetByEmail(User.Identity.Name),
-        //        IsClosed = false,
-        //    };
-        //    topic = topics.Append(topic);
-        //    topic.Messages = new HashSet<ForumMessage>();
-        //    var msg = new ForumMessage
-        //    {
-        //        Text = model.InitialText,
-        //        User = topic.User,
-        //        Date = DateTime.Now,
-        //        Topic = topic,
-        //    };
-        //    topic.Messages.Add(msg);
-        //    messages.Append(msg);
-        //    return CreatedAtRoute("GetTopic", new { id = topic.Id }, new TopicAPIModel(topic));
-        //}
+        [HttpPost]
+        public async Task<ActionResult> Create(NewTopicModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var topic = new Topic
+                {
+                    CategoryId = model.CategoryId,
+                    Name = model.Name,
+                    User = await _users.GetByEmailAsync("spritefok@gmail.com"),
+                    IsClosed = false,
+                };
+                var msg = new ForumMessage(model.InitialText, topic.Id, topic.User.Id);
+                string error;
+                if (_topics.Create(topic, msg, out error))
+                    return Ok(topic);
+                else
+                {
+                    ModelState.AddModelError("", error);
+                    return BadRequest(model);
+                }
+            }
+            return BadRequest(model);
+        }
 
         //[Authorize]
         //[HttpPut("{id}")]
@@ -63,5 +72,11 @@ namespace ISPLabs.Controllers
         //    }
         //    return StatusCode(403);
         //}
+
+        ~TopicController()
+        {
+            _conn.Close();
+            _conn.Dispose();
+        }
     }
 }

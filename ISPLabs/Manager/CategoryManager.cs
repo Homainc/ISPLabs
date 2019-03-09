@@ -35,5 +35,15 @@ namespace ISPLabs.Manager
             }
             return category;
         }
+
+        public static Category Convert(DbDataReader reader)
+        {
+            var category = new Category();
+            category.Id = Int32.Parse(reader["category_id"].ToString());
+            category.Name = reader["category_name"].ToString();
+            category.Description = reader["category_description"].ToString();
+            category.PartitionId = Int32.Parse(reader["partition_id"].ToString());
+            return category;
+        }
     }
 }

@@ -135,6 +135,18 @@
   <data name="EmailRequired" xml:space="preserve">
     <value>E-Mail ist erforderlich</value>
   </data>
+  <data name="Enter login" xml:space="preserve">
+    <value>Login eingeben</value>
+  </data>
+  <data name="Enter password" xml:space="preserve">
+    <value>Passwort eingeben</value>
+  </data>
+  <data name="Enter your email" xml:space="preserve">
+    <value>Geben sie ihre E-Mail Adresse ein</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Zuhause</value>
+  </data>
   <data name="IncorrectConfirmPassword" xml:space="preserve">
     <value>Passwort stimmt nicht überein</value>
   </data>
@@ -146,6 +158,9 @@
   </data>
   <data name="Language" xml:space="preserve">
     <value>Sprache</value>
+  </data>
+  <data name="Last Activity" xml:space="preserve">
+    <value>Letzte Aktivität</value>
   </data>
   <data name="Log In" xml:space="preserve">
     <value>Einloggen</value>
@@ -180,11 +195,20 @@
   <data name="Register" xml:space="preserve">
     <value>Registrieren</value>
   </data>
+  <data name="Repeat password" xml:space="preserve">
+    <value>Wiederhole das Passwort</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Zurücksetzen</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Sparen</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Senden</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
   <data name="Topics" xml:space="preserve">
     <value>Themen</value>

@@ -10,8 +10,13 @@ function getData() {
         url: uri + "/" + cat_id,
         cache: false,
         success: function (data) {
+            $.each(data.topics, function (key, item) {
+                let d = new Date(Date.parse(item.lastActivity));
+                item.lastActivity = d.toLocaleString();
+            });
             $("#category_container").empty();
             $("#catTmpl").tmpl(data).appendTo("#category_container");
+            initModal();
         }
     });
 }
@@ -23,7 +28,7 @@ function createTopic() {
         name: cf.find($("[name = 'Name']")).val(),
         initialText: cf.find($("[name = 'InitialText']")).val(),
     };
-    if (cf.validate().form())
+    if (cf.validate().form()) {
         $.ajax({
             type: "POST",
             url: "/api/topic",
@@ -38,4 +43,5 @@ function createTopic() {
                 alert("Duplicate name");
             },
         });
+    }
 }

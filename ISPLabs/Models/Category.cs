@@ -15,6 +15,7 @@ namespace ISPLabs.Models
         public Category()
         {
             Topics = new List<Topic>();
+            Partition = new Partition();
         }
 
         public Category(int id, string name, string description, int topicCount,Partition partition)

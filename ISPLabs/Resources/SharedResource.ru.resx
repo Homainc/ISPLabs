@@ -135,6 +135,18 @@
   <data name="EmailRequired" xml:space="preserve">
     <value>Необходимо ввести электронную почту</value>
   </data>
+  <data name="Enter login" xml:space="preserve">
+    <value>Введите логин</value>
+  </data>
+  <data name="Enter password" xml:space="preserve">
+    <value>Придумайте пароль</value>
+  </data>
+  <data name="Enter your email" xml:space="preserve">
+    <value>Введите ваш адрес электронной почты</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Главная</value>
+  </data>
   <data name="IncorrectConfirmPassword" xml:space="preserve">
     <value>Пароли не совпадают</value>
   </data>
@@ -146,6 +158,9 @@
   </data>
   <data name="Language" xml:space="preserve">
     <value>Язык</value>
+  </data>
+  <data name="Last Activity" xml:space="preserve">
+    <value>Последняя активность</value>
   </data>
   <data name="Log In" xml:space="preserve">
     <value>Войти</value>
@@ -179,6 +194,12 @@
   </data>
   <data name="Register" xml:space="preserve">
     <value>Регистрация</value>
+  </data>
+  <data name="Repeat password" xml:space="preserve">
+    <value>Повторите ввод пароля</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Сбросить</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Сохранить</value>

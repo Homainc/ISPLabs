@@ -21,5 +21,12 @@ namespace ISPLabs.Models
             Topic = new Topic();
             User = new User();
         }
+
+        public ForumMessage(string text, int topicId, int userId)
+        {
+            Text = text;
+            TopicId = topicId;
+            UserId = userId;
+        }
     }
 }

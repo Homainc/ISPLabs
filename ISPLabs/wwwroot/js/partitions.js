@@ -1,5 +1,4 @@
 ﻿const uri = "/api/partition";
-let partitons = null;
 const catUri = "/api/category";
 
 
@@ -14,98 +13,8 @@ function getData() {
         url: uri,
         cache: false,
         success: function (data) {
-            const tBody = $("#partitions");
-            const delicon = "/images/delete.png";
-            const editicon = "/images/edit.png";
-            const expandicon = "/images/expand.png";
-            const addicon = "/images/add.png";
-            tBody.empty();
-            $.each(data, function (key, item) {
-                var table = $("<table class='table'></table>")
-                    .addClass("col-lg-12");
-                var ctBody = $("<tbody></tbody>");
-                $.each(item.categories, function (ckey, citem) {
-                    var ctr = $("<tr></tr>")
-                        .append($("<th></th>").text(citem.id))
-                        .append($("<td></td>").text(citem.name))
-                        .append($("<td></td>").text(citem.topicsCount))
-                        .append($("<td></td>")
-                            .append($("<button></button>")
-                                .addClass("btn btn-light clear")
-                                .attr("data-toggle", "modal")
-                                .attr("data-target", "#edit_cat")
-                                .append($("<img></img>")
-                                    .attr("src", editicon)
-                                    .attr("height", "20")
-                                    .attr("width", "20"))
-                                .attr("data-id", citem.id)
-                                .attr("data-cat", citem.name)
-                                .attr("data-pid", item.id)
-                                .attr("data-description", citem.description))
-                            .append($("<button></button>")
-                                .addClass("btn btn-light clear")
-                                .attr("data-toggle", "modal")
-                                .attr("data-target", "#request_cat_delete")
-                                .append($("<img></img>")
-                                    .attr("src", delicon)
-                                    .attr("height", "20")
-                                    .attr("width", "20"))
-                                .attr("data-id", citem.id)
-                                .attr("data-cat", citem.name)));
-                    ctr.appendTo(ctBody);
-                });
-                table.append(ctBody);
-                const tr = $("<div class='row border-bottom p-10' style='width: auto; margin: 0px 10px;'></div>")
-                    .append($("<div class= 'col-lg-3'></div>").text(item.id))
-                    .append($("<div class= 'col-lg-3'></div>")
-                        .append($("<a></a>")
-                            .attr("data-toggle", "collapse")
-                            .attr("href", "#cats" + item.id)
-                            .attr("role", "button")
-                            .attr("aria-expanded", false)
-                            .attr("aria-controls", "cats" + item.id)
-                            .attr("data-id", item.id)
-                            .text(item.name)))
-                    .append($("<div class= 'col-lg-3'></div>").text(item.categoriesCount))
-                    .append($("<div class= 'col-lg-3'></div>")
-                        .append($("<button></button>")
-                            .addClass("btn btn-light clear")
-                            .attr("data-toggle", "modal")
-                            .attr("data-target", "#create_cat")
-                            .append($("<img></img>")
-                                .attr("src", addicon)
-                                .attr("height", "20")
-                                .attr("width", "20"))
-                            .attr("data-pid", item.id))
-                        .append($("<button></button>")
-                            .addClass("btn btn-light clear")
-                            .attr("data-toggle", "modal")
-                            .attr("data-target", "#edit_partition")
-                            .append($("<img></img>")
-                                .attr("src", editicon)
-                                .attr("height", "20")
-                                .attr("width", "20"))
-                            .attr("data-id", item.id)
-                            .attr("data-partition", item.name))
-                        .append($("<button></button>")
-                            .addClass("btn btn-light clear")
-                            .attr("data-toggle", "modal")
-                            .attr("data-target", "#request_delete")
-                            .append($("<img></img>")
-                                .attr("src", delicon)
-                                .attr("height", "20")
-                                .attr("width", "20"))
-                            .attr("data-id", item.id)
-                            .attr("data-partition", item.name)));
-                var extr = $("<div style='margin: 0px 30px;'></div>")
-                    .attr("id", "cats" + item.id)
-                    .addClass("row collapse bg-light")
-                    .append(table);
-                tr.appendTo(tBody);
-                extr.appendTo(tBody);
-            });
-            partitons = data;
-            $("#load_bar").addClass("collapse");
+            $("#partitions").empty();
+            $("#partitionTmpl").tmpl(data).appendTo($("#partitions"));            
         },
     });
 }
@@ -271,3 +180,10 @@ $("#edit_cat").on('show.bs.modal', function (event) {
     modal.find($("[name = 'Description']")).val(description);
     modal.find($("#editCatBtn")).attr("onclick", "editCat(" + id + "," + pid + ")");
 });
+
+
+function expandPartition(id) {
+    let td = $("#td" + id);
+    td.toggleClass("p-10");
+    td.find($(".category-row")).toggleClass("h-0");
+}
