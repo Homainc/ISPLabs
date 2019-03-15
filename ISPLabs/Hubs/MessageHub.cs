@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using NHibernate;
 using ISPLabs.Services;
 using ISPLabs.Models;
 using ISPLabs.Models.API;
