@@ -3,188 +3,134 @@
     ViewData["Title"] = SharedLocalizer["Partitions"];
 }
 
-<div class="modal fade" id="request_cat_delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">@SharedLocalizer["Confirm"]</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>
-                    @SharedLocalizer["Do you really want to delete"] '<i id="deleting_cat"></i>'?
-                </p>
+<section class="modal" id="request_cat_delete">
+    <div class="section-header">@SharedLocalizer["Confirm"]</div>
+    <div class="section-body modal-body">
+        <p>
+            @SharedLocalizer["Do you really want to delete"] '<i id="deleting_cat"></i>'?
+        </p>
+        <div class="modal-footer">
+            <button type="button" class="button gray-btn" data-toggle="modal" data-target="request_cat_delete">@SharedLocalizer["No"]</button>
+            <button type="button" id="deleteCatBtn" class="button sky-btn">@SharedLocalizer["Yes"]</button>
+        </div>
+    </div>
+</section>
+
+
+<section class="modal" id="request_delete">
+    <div class="section-header">@SharedLocalizer["Confirm"]</div>
+    <div class="section-body modal-body">
+        <p>
+            @SharedLocalizer["Do you really want to delete"] '<i id="deleting_partition"></i>'?
+        </p>
+        <div class="modal-footer">
+            <button type="button" class="button gray-btn" data-toggle="modal" data-target="request_delete">@SharedLocalizer["No"]</button>
+            <button type="button" id="deletePartitionBtn" class="button sky-btn">@SharedLocalizer["Yes"]</button>
+        </div>
+    </div>
+</section>
+
+<section class="modal" id="create_partition">
+    <div class="section-header">@Localizer["New Partition"]</div>
+    <div class="section-body modal-body">
+        <form id="create_form" action="javascript:void(0);" onsubmit="createPartition()">
+            <div class="validation" id="errors"></div>
+            <div class="form-group">
+                <label asp-for="Name">@Localizer["Name"]</label>
+                <div class="input-group">
+                    <input type="text" asp-for="Name" class="validate-input" />
+                    <span asp-validation-for="Name" />
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">@SharedLocalizer["No"]</button>
-                <button type="button" id="deleteCatBtn" class="btn btn-primary">@SharedLocalizer["Yes"]</button>
+                <button type="button" class="button gray-btn" data-toggle="modal" data-target="create_partition">@SharedLocalizer["Close"]</button>
+                <button type="submit" class="button sky-btn">@Localizer["New Partition"]</button>
             </div>
-        </div>
+        </form>
     </div>
-</div>
+</section>
 
-
-<div class="modal fade" id="request_delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">@SharedLocalizer["Confirm"]</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<section class="modal" id="create_cat">
+    <div class="section-header">@Localizer["Add category"]</div>
+    <div class="section-body modal-body">
+        <form id="create_cat_form" action="javascript:void(0);" onsubmit="createCat()">
+            <div class="validation" id="errors"></div>
+            <input readonly type="text" asp-for="Id" class="form-control collapse" />
+            <div class="form-group">
+                <label asp-for="Name">@Localizer["Name"]</label>
+                <div class="input-group">
+                    <input type="text" asp-for="Name" class="validate-input" />
+                    <span asp-validation-for="Name" />
+                </div>
             </div>
-            <div class="modal-body">
-                <p>
-                    @SharedLocalizer["Do you really want to delete"] '<i id="deleting_partition"></i>'?
-                </p>
+            <div class="form-group">
+                <label for="Description">@Localizer["Description"]</label>
+                <div class="input-group">
+                    <input type="text" id="Description" name="Description" class="validate-input" />
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">@SharedLocalizer["No"]</button>
-                <button type="button" id="deletePartitionBtn" class="btn btn-primary">@SharedLocalizer["Yes"]</button>
+                <button type="button" class="button gray-btn" data-toggle="modal" data-target="create_cat">@SharedLocalizer["Close"]</button>
+                <button type="submit" class="button sky-btn">@Localizer["Add category"]</button>
             </div>
-        </div>
+        </form>
     </div>
-</div>
+</section>
 
-<div class="modal fade" id="create_partition" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">@Localizer["New Partition"]</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<section class="modal" id="edit_partition">
+    <div class="section-header">@Localizer["Edit partition"]</div>
+    <div class="section-body modal-body">
+        <form id="edit_form" action="javascript:void(0);">
+            <div class="validation" id="errors"></div>
+            <div class="form-group">
+                <label asp-for="Name">@Localizer["Name"]</label>
+                <div class="input-group">
+                    <input type="text" asp-for="Name" class="validate-input" />
+                    <span asp-validation-for="Name" />
+                </div>
             </div>
-            <form id="create_form" action="javascript:void(0);" onsubmit="createPartition()">
-                <div class="modal-body">
-                    <div class="validation" id="errors"></div>
-                    <div class="form-group row">
-                        <label asp-for="Name" class="control-label col-lg-2">@Localizer["Name"]</label>
-                        <div class="col-lg-10">
-                            <input type="text" asp-for="Name" class="form-control form-control-sm" />
-                            <span class="small" asp-validation-for="Name" />
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@SharedLocalizer["Close"]</button>
-                    <button type="submit" class="btn btn-primary">@Localizer["New Partition"]</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="create_cat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">@Localizer["Add category"]</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="modal-footer">
+                <button type="button" class="button gray-btn" data-toggle="modal" data-target="edit_partition">@SharedLocalizer["Close"]</button>
+                <button type="submit" class="button sky-btn" id="editPartitionBtn">@SharedLocalizer["Save"]</button>
             </div>
-            <form id="create_cat_form" action="javascript:void(0);" onsubmit="createCat()">
-                <div class="modal-body">
-                    <div class="validation" id="errors"></div>
-                    <input readonly type="text" asp-for="Id" class="form-control collapse" />
-                    <div class="form-group row">
-                        <label asp-for="Name" class="control-label col-lg-2">@Localizer["Name"]</label>
-                        <div class="col-lg-10">
-                            <input type="text" asp-for="Name" class="form-control form-control-sm" />
-                            <span class="small" asp-validation-for="Name" />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="Description" class="control-label col-lg-2">@Localizer["Description"]</label>
-                        <div class="col-lg-10">
-                            <input type="text" id="Description" name="Description" class="form-control form-control-sm" />
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@SharedLocalizer["Close"]</button>
-                    <button type="submit" class="btn btn-primary">@Localizer["Add category"]</button>
-                </div>
-            </form>
-        </div>
+        </form>
     </div>
-</div>
-
-<div class="modal fade" id="edit_partition" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">@Localizer["Edit partition"]</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="edit_form" action="javascript:void(0);">
-                <div class="modal-body">
-                    <div class="validation" id="errors"></div>
-                    <div class="form-group row">
-                        <label asp-for="Name" class="control-label col-lg-2">@Localizer["Name"]</label>
-                        <div class="col-lg-10">
-                            <input type="text" asp-for="Name" class="form-control form-control-sm" />
-                            <span class="small" asp-validation-for="Name" />
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@SharedLocalizer["Close"]</button>
-                    <button type="submit" class="btn btn-primary" id="editPartitionBtn">@SharedLocalizer["Save"]</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+</section>
 
 
-<div class="modal fade" id="edit_cat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">@Localizer["Edit category"]</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<section class="modal" id="edit_cat">
+    <div class="section-header">@Localizer["Edit category"]</div>
+    <div class="section-body modal-body">
+        <form id="edit_cat_form" action="javascript:void(0);">
+            <div class="validation" id="errors"></div>
+            <div class="form-group">
+                <label asp-for="Name">@Localizer["Name"]</label>
+                <div class="input-group">
+                    <input type="text" asp-for="Name" class="validate-input" />
+                    <span asp-validation-for="Name" />
+                </div>
             </div>
-            <form id="edit_cat_form" action="javascript:void(0);">
-                <div class="modal-body">
-                    <div class="validation" id="errors"></div>
-                    <div class="form-group row">
-                        <label asp-for="Name" class="control-label col-lg-2">@Localizer["Name"]</label>
-                        <div class="col-lg-10">
-                            <input type="text" asp-for="Name" class="form-control form-control-sm" />
-                            <span class="small" asp-validation-for="Name" />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="Description" class="control-label col-lg-2">@Localizer["Description"]</label>
-                        <div class="col-lg-10">
-                            <input type="text" id="Description" name="Description" class="form-control form-control-sm" />
-                        </div>
-                    </div>
+            <div class="form-group">
+                <label for="Description">@Localizer["Description"]</label>
+                <div class="input-group">
+                    <input type="text" id="Description" name="Description" class="validate-input" />
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@SharedLocalizer["Close"]</button>
-                    <button type="submit" class="btn btn-primary" id="editCatBtn">@SharedLocalizer["Save"]</button>
-                </div>
-            </form>
-        </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="button gray-btn" data-toggle="modal" data-target="edit_cat">@SharedLocalizer["Close"]</button>
+                <button type="submit" class="button sky-btn" id="editCatBtn">@SharedLocalizer["Save"]</button>
+            </div>
+        </form>
     </div>
-</div>
+</section>
 
 <section class="window">
     <div class="section-header">
-        <div>@SharedLocalizer["Partitions"]</div>
-        <div>
-            <ul class="mini-menu">
-                <li class="el-menu"><a data-target="#create_partition">@Localizer["New Partition"]</a></li>
-            </ul>
+        @SharedLocalizer["Partitions"]
+        <div class="mini-menu">
+            <a class="sky-action" data-toggle="modal" data-target="create_partition">
+                <span class="icon">A</span>@Localizer["New Partition"]
+            </a>
         </div>
     </div>
     <div class="section-body">
@@ -207,13 +153,13 @@
             <td>${id}</td>
             <td onclick="expandPartition(this.dataset.target)" data-target="${id}">${name}</td>
             <td>
-                <button type="button" class="button action-sky-btn" data-target="create_cat" data-pid="${id}">
+                <button type="button" class="button action-sky-btn" data-toggle="modal" data-target="create_cat" data-pid="${id}">
                     <img src="/images/add.png" height="15" width="15" />
                 </button>
-                <button type="button" class="button action-sky-btn" data-target="edit_partition" data-id="${id}" data-partition="${name}">
+                <button type="button" class="button action-sky-btn" data-toggle="modal" data-target="edit_partition" data-id="${id}" data-partition="${name}">
                     <img src="/images/edit.png" height="15" width="15" />
                 </button>
-                <button type="button" class="button action-red-btn" data-target="request_delete" data-id="${id}" data-partition="${name}">
+                <button type="button" class="button action-red-btn" data-toggle="modal" data-target="request_delete" data-id="${id}" data-partition="${name}">
                     <img src="/images/delete.png" height="15" width="15" />
                 </button>
             </td>
@@ -226,10 +172,10 @@
                     <div class="name">${category.name}</div>
                     <div class="topic-count">${category.topicCount}</div>
                     <div class="actions">
-                        <button type="button" class="button action-sky-btn" data-target="#edit_cat" data-id="${category.id}" data-pid="${category.partitionId}" data-cat="${category.name}">
+                        <button type="button" class="button action-sky-btn" data-toggle="modal" data-target="edit_cat" data-id="${category.id}" data-pid="${category.partitionId}" data-cat="${category.name}" data-description="${category.description}">
                             <img src="/images/edit.png" height="15" width="15" />
                         </button>
-                        <button type="button" class="button action-red-btn" data-target="#request_cat_delete" data-cat="${category.name}" data-id="${category.id}">
+                        <button type="button" class="button action-red-btn" data-toggle="modal" data-target="request_cat_delete" data-cat="${category.name}" data-id="${category.id}">
                             <img src="/images/delete.png" height="15" width="15" />
                         </button>
                     </div>
@@ -239,4 +185,5 @@
         </tr>
     </script>
     <script src="~/js/partitions.js" type="text/javascript"></script>
+    <script src="~/js/modal.js"></script>
 }

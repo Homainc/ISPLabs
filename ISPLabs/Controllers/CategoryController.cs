@@ -4,6 +4,7 @@ using Oracle.ManagedDataAccess.Client;
 using System.Threading.Tasks;
 using ISPLabs.Models;
 using ISPLabs.Manager;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ISPLabs.Controllers
 {
@@ -21,41 +22,36 @@ namespace ISPLabs.Controllers
             _categories = new CategoryManager(_conn);
         }
 
-        //[HttpGet]
-        //public ActionResult<ISet<CategoryAPIModel>> GetAll() {
-            
-        //}
-
         [HttpGet("{id}", Name = "GetCategory")]
         public async Task<Category> GetById(int id) => await _categories.GetByIdAsync(id);
 
-        //[Authorize(Roles = "admin")]
-        //[HttpPost]
-        //public ActionResult Create(CategoryAPIModel cat)
-        //{
-        //    var newCategory = categories.Append(cat);
-        //    if (newCategory == null)
-        //        return StatusCode(403);
-        //    return CreatedAtRoute("GetCategory", new { id = newCategory.Id }, newCategory);
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<ActionResult> Create(Category category)
+        {
+            if (await _categories.CreateAsync(category))
+                return Ok(category);
+            return BadRequest(_categories.LastError);
+        }
 
-        //}
-        //[Authorize(Roles = "admin")]
-        //[HttpPut("{id}")]
-        //public IActionResult Update(int id, CategoryAPIModel cat)
-        //{
-        //    cat.Id = id;
-        //    if(categories.Update(cat))
-        //        return NoContent();
-        //    return BadRequest();
-        //}
-        //[Authorize(Roles = "admin")]
-        //[HttpDelete("{id}")]
-        //public IActionResult Delete(int id)
-        //{
-        //    if (categories.Remove(id))
-        //        return NoContent();
-        //    return BadRequest();
-        //}
+        [Authorize(Roles = "admin")]
+        [HttpPut]
+        public async Task<IActionResult> Update(Category category)
+        {
+            if(await _categories.UpdateAsync(category))
+                return Ok(category);
+            return BadRequest(_categories.LastError);
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (await _categories.DeleteAsync(id))
+                return Ok(id);
+            return BadRequest(_categories.LastError);
+        }
+
         ~CategoryController()
         {
             _conn.Close();

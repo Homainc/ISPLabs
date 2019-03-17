@@ -1,4 +1,7 @@
-﻿function initModal() {
+﻿$(document).ready(function () {
+    initModal();
+});
+function initModal() {
     $(document).delegate('[data-toggle="modal"]', 'click', function () { toggleModal(this); });
     $(document).delegate('.overflow', 'click', function () { toggleModal(this); });
     $(document).delegate('.modal', 'show.modal', function (obj) { showModal(this.id) })

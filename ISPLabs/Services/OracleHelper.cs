@@ -41,6 +41,20 @@ namespace ISPLabs.Services
 
         public static bool BoolResult(OracleCommand cmd) => cmd.Parameters["result"].Value.ToString() == "1";
 
+        public static bool BoolResultWithError(OracleCommand cmd, out string error)
+        {
+            if(cmd.Parameters["result"].Value.ToString() == "1")
+            {
+                error = null;
+                return true;
+            }
+            else
+            {
+                error = cmd.Parameters["er"].Value.ToString();
+                return false;
+            }
+        }
+
         public static OracleConnection GetDBConnection()
         {
             var host = "localhost";
@@ -77,6 +91,12 @@ namespace ISPLabs.Services
             conn.Open();
             try
             {
+                CallSQLScript(conn, "INSERT_CATEGORY");
+                CallSQLScript(conn, "DELETE_CATEGORY");
+                CallSQLScript(conn, "UPDATE_CATEGORY");
+                CallSQLScript(conn, "UPDATE_PARTITION");
+                CallSQLScript(conn, "INSERT_PARTITION");
+                CallSQLScript(conn, "DELETE_PARTITION");
                 CallSQLScript(conn, "DELETE_TOPIC");
                 CallSQLScript(conn, "UPDATE_MESSAGE");
                 CallSQLScript(conn, "DELETE_MESSAGE");

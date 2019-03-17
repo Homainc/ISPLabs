@@ -19,8 +19,8 @@ function getData() {
     });
 }
 
-$("#request_delete").on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
+$("#request_delete").on('show.modal', function (event, sender) {
+    var button = $(sender);
     const pname = button.data("partition");
     const id = button.data("id");
     $("#deleting_partition").text(pname);
@@ -34,7 +34,7 @@ function deletePartition(id) {
         url: uri + "/" + id,
         success: function (result) {
             getData();
-            $("#request_delete").modal('hide');
+            $("#request_delete").trigger('hide.modal');
         }
     });
 }
@@ -51,7 +51,7 @@ function createPartition() {
             contentType: "application/json",
             data: JSON.stringify(part),
             success: function (result) {
-                $("#create_partition").modal('hide');
+                $("#create_partition").trigger('hide.modal');
                 getData();
             },
             error: function (xhr, status, error) {
@@ -63,17 +63,18 @@ function createPartition() {
 
 function editPartition(id) {
     var part = {
+        id: id,
         name: $("#edit_form").find($("[name = 'Name']")).val(),
     };
     if ($("#edit_form").validate().form())
         $.ajax({
             type: "PUT",
-            url: uri + "/" + id,
+            url: uri,
             accepts: "application/json",
             contentType: "application/json",
             data: JSON.stringify(part),
             success: function (result) {
-                $("#edit_partition").modal('hide');
+                $("#edit_partition").trigger('hide.modal');
                 getData();
             },
             error: function (xhr, status, error) {
@@ -82,8 +83,8 @@ function editPartition(id) {
         });
 }
 
-$("#edit_partition").on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
+$("#edit_partition").on('show.modal', function (event, sender) {
+    var button = $(sender);
     const pname = button.data("partition");
     const id = button.data("id");
     const modal = $(this);
@@ -91,8 +92,8 @@ $("#edit_partition").on('show.bs.modal', function (event) {
     modal.find($("#editPartitionBtn")).attr("onclick", "editPartition(" + id + ")");
 });
 
-$("#create_cat").on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
+$("#create_cat").on('show.modal', function (event, sender) {
+    var button = $(sender);
     const pid = button.data("pid");
     const modal = $(this);
     modal.find($("[name = 'Id']")).val(pid);
@@ -114,7 +115,7 @@ function createCat() {
             contentType: "application/json",
             data: JSON.stringify(cat),
             success: function (result) {
-                $("#create_cat").modal('hide');
+                $("#create_cat").trigger('hide.modal');
                 getData();
             },
             error: function (xhr, status, error) {
@@ -124,8 +125,8 @@ function createCat() {
 }
 
 
-$("#request_cat_delete").on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
+$("#request_cat_delete").on('show.modal', function (event, sender) {
+    var button = $(sender);
     const cname = button.data("cat");
     const id = button.data("id");
     $("#deleting_cat").text(cname);
@@ -139,7 +140,7 @@ function deleteCat(id) {
         url: catUri + "/" + id,
         success: function (result) {
             getData();
-            $("#request_cat_delete").modal('hide');
+            $("#request_cat_delete").trigger('hide.modal');
         }
     });
 }
@@ -148,6 +149,7 @@ function deleteCat(id) {
 function editCat(id, pid) {
     var form = $("#edit_cat_form");
     var cat = {
+        id: id,
         partitionId: pid,
         name: form.find($("[name = 'Name']")).val(),
         description: form.find($("[name = 'Description']")).val(),
@@ -155,12 +157,12 @@ function editCat(id, pid) {
     if (form.validate().form())
         $.ajax({
             type: "PUT",
-            url: catUri + "/" + id,
+            url: catUri,
             accepts: "application/json",
             contentType: "application/json",
             data: JSON.stringify(cat),
             success: function (result) {
-                $("#edit_cat").modal('hide');
+                $("#edit_cat").trigger('hide.modal');
                 getData();
             },
             error: function (xhr, status, error) {
@@ -169,8 +171,8 @@ function editCat(id, pid) {
         });
 }
 
-$("#edit_cat").on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
+$("#edit_cat").on('show.modal', function (event, sender) {
+    var button = $(sender);
     const cname = button.data("cat");
     const id = button.data("id");
     const pid = button.data("pid");
