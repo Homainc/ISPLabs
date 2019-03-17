@@ -29,6 +29,18 @@ namespace ISPLabs.Services
             }
         }
 
+        public static OracleCommand SetupProcCmd(string proc, OracleConnection conn, bool isFunction = true)
+        {
+            var cmd = new OracleCommand(proc, conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.BindByName = true;
+            if (isFunction)
+                cmd.Parameters.Add("result", OracleDbType.Int32).Direction = ParameterDirection.ReturnValue;
+            return cmd;
+        }
+
+        public static bool BoolResult(OracleCommand cmd) => cmd.Parameters["result"].Value.ToString() == "1";
+
         public static OracleConnection GetDBConnection()
         {
             var host = "localhost";
@@ -65,6 +77,11 @@ namespace ISPLabs.Services
             conn.Open();
             try
             {
+                CallSQLScript(conn, "DELETE_TOPIC");
+                CallSQLScript(conn, "UPDATE_MESSAGE");
+                CallSQLScript(conn, "DELETE_MESSAGE");
+                CallSQLScript(conn, "GET_TOPIC_WITH_USER");
+                CallSQLScript(conn, "GET_TOPIC_EAGER");
                 CallSQLScript(conn, "INSERT_MESSAGE");
                 CallSQLScript(conn, "INSERT_TOPIC");
                 CallSQLScript(conn, "GET_CATEGORY");

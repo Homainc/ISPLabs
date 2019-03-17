@@ -1,20 +1,16 @@
 ﻿@model SendForumMessageModel
-<div class="p-10 col-lg-2 border-right">
-    <p class="clear">@ViewBag.CurrentLogin</p><br />
-    <img class="clear" style="border-radius: 90px; border:1px solid gray;" src="~/images/default-avatar.png" height="90" width="90" /><br />
-</div>
-<div id="send_msg" class="col-lg-10 mt-10">
+
+<td width="200">
+    <p>@ViewBag.CurrentLogin</p><br />
+    <img class="user-avatar" src="~/images/default-avatar.png" height="90" width="90" /><br />
+</td>
+<td id="send_msg">
     <form id="send_msg_form" action="javascript:void(0);" onsubmit="sendMessage()">
-        <div class="validation" asp-validation-summary="ModelOnly"></div>
-        <div class="form-group row">
-            <label asp-for="Text" class="control-label col-lg-2">@SharedLocalizer["Message"]</label>
-            <div class="col-lg-10">
-                <textarea asp-for="Text" class="form-control form-control-sm"></textarea>
-                <span class="small" asp-validation-for="Text" />
-            </div>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-default btn-sm" style="float:right;">@SharedLocalizer["Send"]</button>
+        <div style="width: 97%">
+            <div asp-validation-summary="ModelOnly"></div>
+            <textarea asp-for="Text" class="validate-input" placeholder="@SharedLocalizer["Enter message"]..." rows="5"/>
+            <span asp-validation-for="Text" />
+            <button type="submit" class="button sky-btn" style="margin-top:10px;">@SharedLocalizer["Send"]</button>
         </div>
     </form>
-</div>
+</td>

@@ -132,11 +132,17 @@
   <data name="Do you really want to delete" xml:space="preserve">
     <value>Möchten Sie wirklich löschen</value>
   </data>
+  <data name="Do you really want to delete this message" xml:space="preserve">
+    <value>Möchten Sie diese Nachricht wirklich löschen</value>
+  </data>
   <data name="EmailRequired" xml:space="preserve">
     <value>E-Mail ist erforderlich</value>
   </data>
   <data name="Enter login" xml:space="preserve">
     <value>Login eingeben</value>
+  </data>
+  <data name="Enter message" xml:space="preserve">
+    <value>Nachricht eingeben</value>
   </data>
   <data name="Enter password" xml:space="preserve">
     <value>Passwort eingeben</value>

@@ -1,8 +1,8 @@
 ﻿using ISPLabs.Models;
+using ISPLabs.Services;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -64,10 +64,55 @@ namespace ISPLabs.Manager
                 {
                     var msg = ForumMessageManager.Convert(reader);
                     msg.User = new User { Login = reader["user_login"].ToString() };
+                    msg.User.Role = RoleManager.Convert(reader);
+                    msg.User.RoleId = msg.User.Role.Id;
                     topic.Messages.Add(msg);
                 }
             }
             return topic;
+        }
+
+        public async Task<Topic> GetByIdWithUserAsync(int id)
+        {
+            var cmd = new OracleCommand("get_topic_with_user", _conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.BindByName = true;
+            cmd.Parameters.Add("topic_id", OracleDbType.Int32).Value = id;
+            cmd.Parameters.Add("topic_name", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("topic_date", OracleDbType.Date).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("topic_is_closed", OracleDbType.Int32).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("category_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("user_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("user_login", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("user_email", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("user_reg_date", OracleDbType.Date).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("role_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("role_name", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            await cmd.ExecuteNonQueryAsync();
+            var topic = TopicManager.Convert(cmd.Parameters);
+            topic.User = UserManager.Convert(cmd.Parameters);
+            topic.UserId = topic.User.Id;
+            topic.User.Role = RoleManager.Convert(cmd.Parameters);
+            topic.User.RoleId = topic.User.Role.Id;
+            return topic;
+        }
+
+        public bool Delete(int id, out string error)
+        {
+            var cmd = OracleHelper.SetupProcCmd("delete_topic", _conn);
+            cmd.Parameters.Add("p_id", OracleDbType.Int32).Value = id;
+            cmd.Parameters.Add("er", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            cmd.ExecuteNonQuery();
+            if (OracleHelper.BoolResult(cmd))
+            {
+                error = "";
+                return true;
+            }
+            else
+            {
+                error = cmd.Parameters["er"].Value.ToString();
+                return false;
+            }
         }
 
         public static Topic Convert(DbDataReader reader)
@@ -78,6 +123,17 @@ namespace ISPLabs.Manager
             topic.Date = (DateTime)reader["topic_date"];
             topic.CategoryId = Int32.Parse(reader["category_id"].ToString());
             topic.IsClosed = reader["topic_is_closed"].ToString() == "1";
+            return topic;
+        }
+
+        public static Topic Convert(OracleParameterCollection pars)
+        {
+            var topic = new Topic();
+            topic.Id = Int32.Parse(pars["topic_id"].Value.ToString());
+            topic.Name = pars["topic_name"].Value.ToString();
+            topic.Date = ((OracleDate)pars["topic_date"].Value).Value;
+            topic.CategoryId = Int32.Parse(pars["category_id"].Value.ToString());
+            topic.IsClosed = pars["topic_is_closed"].Value.ToString() == "1";
             return topic;
         }
     }

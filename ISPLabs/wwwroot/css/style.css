@@ -12,6 +12,14 @@
     padding: 0px;
 }
 
+@font-face {
+    font-family: 'SignifyLite';
+    src: url('../fonts/signifylite-webfont.eot');
+    src: url('../fonts/signifylite-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/signifylite-webfont.woff') format('woff'), url('../fonts/signifylite-webfont.ttf') format('truetype'), url('../fonts/signifylite-webfont.svg#SignifyLite') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     background: url("../images/spring.png");
@@ -107,7 +115,7 @@ section .section-header {
     height: 20px;
     padding: 10px 20px;
     background-color: #f8f9fa;
-    border-bottom: 1px solid #dbd9d8;
+    border-bottom: 1px solid var(--color-border-primary);
     font-weight: 600;
 }
 
@@ -206,25 +214,6 @@ section .section-body {
     font-style: italic;
 }
 
-.modal {
-    transition: all 0.1s ease-in;
-    position: absolute;
-    top: -100%;
-    z-index: 9999;
-    left: 50%;
-}
-
-.overflow {
-    position: absolute;
-    z-index: 9998;
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    opacity: 0.25;
-    background-color: #000;
-    top: 0;
-}
-
 .modal-body{
     padding: 10px 20px 20px 20px;
     min-width: 500px;
@@ -280,6 +269,7 @@ input.input-validation-error {
     background-color: #fafafa;
     padding: 10px;
     width: 100%;
+    font-family: 'Roboto', sans-serif;
 }
 
 .validate-input::placeholder{
@@ -464,3 +454,108 @@ tr, td, tbody, table {
     .category-row:nth-child(even){
         background:white;
     }
+
+table.messages {
+    width: 100%;
+}
+
+    table.messages tr {
+        text-align: left;
+        vertical-align: top;
+    }
+
+    table.messages td {
+        border: 1px solid var(--color-border-primary);
+        border-top: none;
+    }
+
+img.user-avatar {
+    border: 1px solid var(--color-border-primary);
+    border-radius: 45px;
+}
+
+.color-red{
+    color: var(--color-error);
+}
+
+.message-text{
+    min-height: 150px;
+}
+
+.message-actions{
+    text-align: right;
+}
+
+.mini-menu{
+    vertical-align: middle;
+}
+
+.mini-menu a{
+    display: inline-block;
+    text-decoration: none;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity .3s ease-in-out;
+    font-weight: normal;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
+.mini-menu a:hover{
+    opacity: 1;
+    text-decoration: none;
+}
+
+.mini-menu .sky-action{
+    color: var(--color-button-primary);
+}
+
+    .mini-menu .sky-action:hover {
+        text-shadow: 0px 0px 1px var(--color-button-primary);
+    }
+
+.mini-menu .red-action{
+    color: var(--color-error);
+}
+
+    .mini-menu .red-action:hover {
+        text-shadow: 0px 0px 1px var(--color-error);
+    }
+
+span.icon {
+    margin-top: -10px;
+    margin-right: 2px;
+    display: inline-block;
+    vertical-align: middle;
+    font: 1em 'SignifyLite';
+}
+
+.pointer{cursor: pointer;}
+
+.modal {
+    top: 50%;
+    left: 50%;
+    z-index: 9999;
+    position: fixed;
+    opacity: 0;
+    transition: opacity .5s ease-in;
+    display: none;
+    margin: 0px;
+}
+
+.overflow {
+    position: fixed;
+    z-index: 9998;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    background-color: #000;
+    transition: opacity .5s ease-in;
+    top: 0;
+    left: 0;
+    display: none;
+    overflow: auto;
+}
+
+.modal-button{text-align:right;}
+.mt-10{margin-top:10px;}

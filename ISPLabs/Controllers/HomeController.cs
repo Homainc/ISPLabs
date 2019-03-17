@@ -6,18 +6,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Oracle.ManagedDataAccess.Client;
 using ISPLabs.Manager;
+using System.Threading.Tasks;
 
 namespace ISPLabs.Controllers
 {
     public class HomeController : Controller
     {
         private OracleConnection _conn;
-        private CategoryManager _categories;
+        private TopicManager _topics;
 
         public HomeController()
         {
             _conn = OracleHelper.GetDBConnection();
             _conn.Open();
+            _topics = new TopicManager(_conn);
         }
 
         [HttpPost]
@@ -40,27 +42,28 @@ namespace ISPLabs.Controllers
             return View();
         }
 
-        public IActionResult Topic(int id)
+        public async Task<IActionResult> Topic(int id)
         {
-            //var topic = topics.GetByIdWithUser(id);
-            //ViewBag.TopicId = topic.Id;
-            //ViewBag.TopicName = topic.Name;
-            //ViewBag.TopicOwner = topic.User.Email;
+            var topic = await _topics.GetByIdWithUserAsync(id);
+            ViewBag.TopicId = topic.Id;
+            ViewBag.TopicName = topic.Name;
+            ViewBag.TopicOwner = topic.User.Email;
+            ViewBag.CurrentLogin = topic.User.Login;
             return View();
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult RemoveTopic(int id)
+        public async Task<IActionResult> RemoveTopic(int id)
         {
-            //var topic = topics.GetByIdWithCategory(id);
-            //if (topic != null && (User.Identity.Name == topic.User.Email || User.IsInRole("admin")))
-            //{
-            //    if(!topics.Remove(id))
-            //        return BadRequest();
-            //    return RedirectToAction("Category", "Home", new { id = topic.Category.Id });
-            //}
-            return StatusCode(403);
+            var topic = await _topics.GetByIdWithUserAsync(id);
+            string error;
+            if (_topics.Delete(id, out error))
+            {
+                return RedirectToAction("Category", "Home", new { id = topic.CategoryId });
+            }
+            else
+                return BadRequest(error);
         }
 
         public IActionResult Test()

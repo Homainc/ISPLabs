@@ -85,12 +85,12 @@ namespace ISPLabs.Manager
         public static User Convert(OracleParameterCollection item, bool isSecure = false)
         {
             var user = new User();
-            user.Id = Int32.Parse(item["user_id"].Value.ToString());
-            user.Login = item["user_login"].Value.ToString();
-            user.Email = item["user_email"].Value.ToString();
-            user.Password = isSecure? item["user_password"].Value.ToString():null;
-            user.RegistrationDate = ((OracleDate)item["user_reg_date"].Value).Value;
-            user.RoleId = Int32.Parse(item["role_id"].Value.ToString());
+            user.Id = item["user_id"] == null ? 0 : Int32.Parse(item["user_id"].Value.ToString());
+            user.Login = item["user_login"] == null ? null : item["user_login"].Value.ToString();
+            user.Email = item["user_email"] == null ? null : item["user_email"].Value.ToString();
+            user.Password = isSecure ? item["user_password"].Value.ToString() : null;
+            user.RegistrationDate = item["user_reg_date"] == null ? default(DateTime) : ((OracleDate)item["user_reg_date"].Value).Value;
+            user.RoleId = item["role_id"] == null ? 0 : Int32.Parse(item["role_id"].Value.ToString());
             return user;
         }
 

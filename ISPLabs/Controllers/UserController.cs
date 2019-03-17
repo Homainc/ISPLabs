@@ -5,6 +5,7 @@ using ISPLabs.Models;
 using ISPLabs.Services;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
+using System.Web.Http;
 using ISPLabs.Manager;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace ISPLabs.Controllers
     //[Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController
     {
         private OracleConnection _conn;
         private UserManager _users;
@@ -79,6 +80,7 @@ namespace ISPLabs.Controllers
         //            }
         //        }
         //    }
+
         ~UserController()
         {
             _conn.Close();

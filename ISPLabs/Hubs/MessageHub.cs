@@ -20,6 +20,7 @@ namespace ISPLabs.Hubs
         public MessageHub()
         {
             _conn = OracleHelper.GetDBConnection();
+            _conn.Open();
             _messages = new ForumMessageManager(_conn);
             _users = new UserManager(_conn);
         }
@@ -36,43 +37,19 @@ namespace ISPLabs.Hubs
             }
         }
 
-        //[Authorize]
-        //public async Task DeleteMessage(int id)
-        //{
-        //    using (ISession session = nHibernateHelper.OpenSession())
-        //    {
-        //        var msg = session.Query<ForumMessage>().Single(x => x.Id == id);
-        //        var topicId = msg.Topic.Id;
-        //        if (Context.User.Identity.Name == msg.User.Email || Context.User.IsInRole("admin"))
-        //        {
-        //            using (ITransaction transaction = session.BeginTransaction())
-        //            {
-        //                session.Delete(msg);
-        //                transaction.Commit();
-        //                await Clients.All.SendAsync($"Deleted{topicId}", id);
-        //            }
-        //        }
-        //    }
-        //}
-        //[Authorize]
-        //public async Task EditMessage(int id, string text)
-        //{
-        //    using (ISession session = nHibernateHelper.OpenSession())
-        //    {
-        //        var msg = session.Query<ForumMessage>().Single(x => x.Id == id);
-        //        var topicId = msg.Topic.Id;
-        //        if (Context.User.Identity.Name == msg.User.Email || Context.User.IsInRole("admin"))
-        //        {
-        //            using (ITransaction transaction = session.BeginTransaction())
-        //            {
-        //                msg.Text = text;
-        //                session.SaveOrUpdate(msg);
-        //                transaction.Commit();
-        //                await Clients.All.SendAsync($"Changed{topicId}", id, text);
-        //            }
-        //        }
-        //    }
-        //}
+        [Authorize]
+        public async Task DeleteMessage(int id, int topicId)
+        {
+            if (await _messages.DeleteAsync(id))
+                await Clients.All.SendAsync($"Deleted{topicId}", id);
+        }
+
+        [Authorize]
+        public async Task EditMessage(int id, string text, int topicId)
+        {
+            if (await _messages.UpdateAsync(new ForumMessage { Id = id, Text = text }))
+                await Clients.All.SendAsync($"Changed{topicId}", id, text);
+        }
 
         ~MessageHub()
         {

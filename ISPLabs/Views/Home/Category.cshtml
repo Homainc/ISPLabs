@@ -38,11 +38,13 @@
     <script src="~/js/jquery.tmpl.js" type="text/javascript"></script>
     <script id="catTmpl" type="text/x-jquery-tmpl">
         <div class="section-header">
-            <div class="header-title">${name}</div>
-            <div class="header-actions">
+            ${name}
+            <div class="mini-menu">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <button data-toggle="modal" data-target="new_topic">@Localizer["New topic"]</button>
+                    <a class="sky-action" data-toggle="modal" data-target="new_topic">
+                    <span class="icon">A</span>@Localizer["New topic"]
+                    </a>
                 }
             </div>
         </div>
