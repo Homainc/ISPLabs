@@ -97,6 +97,8 @@ $("#create_cat").on('show.modal', function (event, sender) {
     const pid = button.data("pid");
     const modal = $(this);
     modal.find($("[name = 'Id']")).val(pid);
+    modal.find($("[name = 'Name']")).val('');
+    modal.find($("[name = 'Description']")).val('');
 });
 
 

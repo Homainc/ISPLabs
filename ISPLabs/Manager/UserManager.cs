@@ -1,4 +1,5 @@
 ﻿using ISPLabs.Models;
+using ISPLabs.Services;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using System;
@@ -12,14 +13,15 @@ namespace ISPLabs.Manager
     public class UserManager
     {
         private OracleConnection _conn;
+        private string _lastError;
+
+        public string LastError { get { return _lastError; } }
 
         public UserManager(OracleConnection conn) => _conn = conn;
 
         public async Task<ICollection<User>> GetAllAsync()
         {
-            OracleCommand cmd = new OracleCommand("get_users", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
+            OracleCommand cmd = OracleHelper.SetupProcCmd("get_users", _conn, false);
             cmd.Parameters.Add("result_users", OracleDbType.RefCursor).Direction = ParameterDirection.Output;
             List<User> list = new List<User>();
             using (var reader = await cmd.ExecuteReaderAsync())
@@ -35,51 +37,37 @@ namespace ISPLabs.Manager
         }
 
         public async Task<User> GetByEmailAsync(string email) {
-            var cmd = new OracleCommand("get_user_by_email", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
+            var cmd = OracleHelper.SetupProcCmd("get_user_by_email", _conn, false);
             cmd.Parameters.Add("u_email", OracleDbType.Varchar2, 255).Value = email;
-            cmd.Parameters.Add("user_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("user_login", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("user_email", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            UserManager.AppendOutPars(cmd);
             cmd.Parameters.Add("user_password", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("user_reg_date", OracleDbType.Date).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("role_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("role_name", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            RoleManager.AppendOutPars(cmd);
             await cmd.ExecuteNonQueryAsync();
             var user = UserManager.Convert(cmd.Parameters);
             user.Role = RoleManager.Convert(cmd.Parameters);
             return user;
         }
 
-        public bool Login(string email, string password, out string error)
+        public async Task<bool> LoginAsync(string email, string password)
         {
-            OracleCommand cmd = new OracleCommand("login", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
-            cmd.Parameters.Add("result", OracleDbType.Int32).Direction = ParameterDirection.ReturnValue;
+            OracleCommand cmd = OracleHelper.SetupProcCmd("login", _conn);
             cmd.Parameters.Add("pass_email", OracleDbType.Varchar2, 255).Value = email;
             cmd.Parameters.Add("pass_password", OracleDbType.Varchar2, 255).Value = password;
             cmd.Parameters.Add("er", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
-            cmd.ExecuteNonQuery();
-            error = cmd.Parameters["er"].Value.ToString();
-            return cmd.Parameters["result"].Value.ToString() == "1";
+            await cmd.ExecuteNonQueryAsync();
+            return OracleHelper.BoolResultWithError(cmd, out _lastError);
         }
 
-        public bool Registration(User user, out string error)
+        public async Task<bool> RegistrationAsync(User user)
         {
-            OracleCommand cmd = new OracleCommand("registration", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
-            cmd.Parameters.Add("result", OracleDbType.Int32).Direction = ParameterDirection.ReturnValue;
+            OracleCommand cmd = OracleHelper.SetupProcCmd("registration", _conn);
             cmd.Parameters.Add("pass_email", OracleDbType.Varchar2, 255).Value = user.Email;
             cmd.Parameters.Add("pass_password", OracleDbType.Varchar2, 255).Value = user.Password;
             cmd.Parameters.Add("pass_login", OracleDbType.Varchar2, 255).Value = user.Login;
             cmd.Parameters.Add("pass_role_id", OracleDbType.Int32).Value = user.Role.Id;
-            cmd.Parameters.Add("err", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
-            cmd.ExecuteNonQuery();
-            error = cmd.Parameters["err"].Value.ToString();
-            return cmd.Parameters["result"].Value.ToString() == "1";
+            cmd.Parameters.Add("er", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            await cmd.ExecuteNonQueryAsync();
+            return OracleHelper.BoolResultWithError(cmd, out _lastError);
         }
 
         public static User Convert(OracleParameterCollection item, bool isSecure = false)
@@ -104,6 +92,14 @@ namespace ISPLabs.Manager
             user.RegistrationDate = (DateTime)reader["user_reg_date"];
             user.RoleId = Int32.Parse(reader["role_id"].ToString());
             return user;
+        }
+
+        public static void AppendOutPars(OracleCommand cmd)
+        {
+            cmd.Parameters.Add("user_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("user_login", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("user_email", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("user_reg_date", OracleDbType.Date).Direction = ParameterDirection.Output;
         }
     }
 }

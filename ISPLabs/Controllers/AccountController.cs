@@ -35,14 +35,13 @@ namespace ISPLabs.Controllers
         public async Task<IActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid) {
-                string error;
-                if (_users.Login(model.Email, model.Password, out error))
+                if (await _users.LoginAsync(model.Email, model.Password))
                 {
                     await Authenticate(await _users.GetByEmailAsync(model.Email));
                     return RedirectToAction("Index", "Home");
                 }
                 else
-                    ModelState.AddModelError("", error);
+                    ModelState.AddModelError("", _users.LastError);
             }
             return View(model);
         }
@@ -63,14 +62,13 @@ namespace ISPLabs.Controllers
                     Password = model.Password,
                     Role = await _roles.GetByNameAsync("user")
                 };
-                string error;
-                if (_users.Registration(user, out error))
+                if (await _users.RegistrationAsync(user))
                 {
                     await Authenticate(user);
                     return RedirectToAction("Index", "Home");
                 }
                 else
-                    ModelState.AddModelError("", error);
+                    ModelState.AddModelError("", _users.LastError);
             }
             return View(model);
         }

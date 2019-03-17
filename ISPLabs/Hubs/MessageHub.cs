@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using ISPLabs.Services;
 using ISPLabs.Models;
-using ISPLabs.Models.API;
 using Oracle.ManagedDataAccess.Client;
 using ISPLabs.Manager;
 

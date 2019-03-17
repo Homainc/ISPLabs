@@ -12,14 +12,15 @@ namespace ISPLabs.Manager
     public class TopicManager
     {
         private OracleConnection _conn;
+        private string _lastError;
+
+        public string LastError { get { return _lastError; } }
 
         public TopicManager(OracleConnection conn) => _conn = conn; 
 
-        public bool Create(Topic topic, ForumMessage initialMessage, out string error)
+        public async Task<bool> CreateAsync(Topic topic, ForumMessage initialMessage)
         {
-            var cmd = new OracleCommand("insert_topic", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
+            var cmd = OracleHelper.SetupProcCmd("insert_topic", _conn, false);
             cmd.Parameters.Add("result", OracleDbType.Int32).Direction = ParameterDirection.ReturnValue;
             cmd.Parameters.Add("p_name", OracleDbType.Varchar2, 255).Value = topic.Name;
             cmd.Parameters.Add("p_category_id", OracleDbType.Int32).Value = topic.CategoryId;
@@ -30,8 +31,8 @@ namespace ISPLabs.Manager
             cmd.Parameters.Add("new_message_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
             cmd.Parameters.Add("topic_date", OracleDbType.Date).Direction = ParameterDirection.Output;
             cmd.Parameters.Add("er", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
-            cmd.ExecuteNonQuery();
-            if (cmd.Parameters["result"].Value.ToString() == "1")
+            await cmd.ExecuteNonQueryAsync();
+            if (OracleHelper.BoolResultWithError(cmd, out _lastError))
             {
                 topic.Id = Int32.Parse(cmd.Parameters["new_topic_id"].Value.ToString());
                 topic.Date = ((OracleDate)cmd.Parameters["topic_date"].Value).Value;
@@ -39,20 +40,17 @@ namespace ISPLabs.Manager
                 initialMessage.TopicId = topic.Id;
                 initialMessage.Date = topic.Date;
                 topic.Messages.Add(initialMessage);
-                error = "";
                 return true;
             }
-            error = cmd.Parameters["er"].Value.ToString();
             return false;
         }
 
         public async Task<Topic> GetByIdAsync(int id)
         {
-            var cmd = new OracleCommand("get_topic_eager", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
+            var cmd = OracleHelper.SetupProcCmd("get_topic_eager", _conn, false);
             cmd.Parameters.Add("p_id", OracleDbType.Int32).Value = id;
             cmd.Parameters.Add("topic_name", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("topic_is_closed", OracleDbType.Int32, 255).Direction = ParameterDirection.Output;
             cmd.Parameters.Add("result_messages", OracleDbType.RefCursor).Direction = ParameterDirection.Output;
             var topic = new Topic { Id = id };
             using (var reader = await cmd.ExecuteReaderAsync())
@@ -60,6 +58,7 @@ namespace ISPLabs.Manager
                 if (cmd.Parameters["topic_name"].Value == DBNull.Value)
                     return null;
                 topic.Name = cmd.Parameters["topic_name"].Value.ToString();
+                topic.IsClosed = cmd.Parameters["topic_is_closed"].Value.ToString() == "1";
                 while(await reader.ReadAsync())
                 {
                     var msg = ForumMessageManager.Convert(reader);
@@ -74,20 +73,12 @@ namespace ISPLabs.Manager
 
         public async Task<Topic> GetByIdWithUserAsync(int id)
         {
-            var cmd = new OracleCommand("get_topic_with_user", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
-            cmd.Parameters.Add("topic_id", OracleDbType.Int32).Value = id;
-            cmd.Parameters.Add("topic_name", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("topic_date", OracleDbType.Date).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("topic_is_closed", OracleDbType.Int32).Direction = ParameterDirection.Output;
+            var cmd = OracleHelper.SetupProcCmd("get_topic_with_user", _conn, false);
+            cmd.Parameters.Add("p_id", OracleDbType.Int32).Value = id;
             cmd.Parameters.Add("category_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("user_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("user_login", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("user_email", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("user_reg_date", OracleDbType.Date).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("role_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("role_name", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            TopicManager.AppendOutPars(cmd);
+            UserManager.AppendOutPars(cmd);
+            RoleManager.AppendOutPars(cmd);
             await cmd.ExecuteNonQueryAsync();
             var topic = TopicManager.Convert(cmd.Parameters);
             topic.User = UserManager.Convert(cmd.Parameters);
@@ -97,22 +88,23 @@ namespace ISPLabs.Manager
             return topic;
         }
 
-        public bool Delete(int id, out string error)
+        public async Task<bool> UpdateAsync(Topic topic)
+        {
+            var cmd = OracleHelper.SetupProcCmd("update_topic", _conn);
+            cmd.Parameters.Add("p_id", OracleDbType.Int32).Value = topic.Id;
+            cmd.Parameters.Add("p_name", OracleDbType.Varchar2, 255).Value = topic.Name;
+            cmd.Parameters.Add("p_is_closed", OracleDbType.Int32).Value = topic.IsClosed ? 1 : 0;
+            await cmd.ExecuteNonQueryAsync();
+            return OracleHelper.BoolResult(cmd);
+        }
+
+        public async Task<bool> DeleteAsync(int id)
         {
             var cmd = OracleHelper.SetupProcCmd("delete_topic", _conn);
             cmd.Parameters.Add("p_id", OracleDbType.Int32).Value = id;
             cmd.Parameters.Add("er", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
-            cmd.ExecuteNonQuery();
-            if (OracleHelper.BoolResult(cmd))
-            {
-                error = "";
-                return true;
-            }
-            else
-            {
-                error = cmd.Parameters["er"].Value.ToString();
-                return false;
-            }
+            await cmd.ExecuteNonQueryAsync();
+            return OracleHelper.BoolResultWithError(cmd, out _lastError);
         }
 
         public static Topic Convert(DbDataReader reader)
@@ -135,6 +127,14 @@ namespace ISPLabs.Manager
             topic.CategoryId = Int32.Parse(pars["category_id"].Value.ToString());
             topic.IsClosed = pars["topic_is_closed"].Value.ToString() == "1";
             return topic;
+        }
+
+        public static void AppendOutPars(OracleCommand cmd)
+        {
+            cmd.Parameters.Add("topic_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("topic_name", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("topic_date", OracleDbType.Date).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("topic_is_closed", OracleDbType.Int32).Direction = ParameterDirection.Output;
         }
     }
 }

@@ -16,7 +16,6 @@ function getData() {
             });
             $("#category_container").empty();
             $("#catTmpl").tmpl(data).appendTo("#category_container");
-            initModal();
         }
     });
 }

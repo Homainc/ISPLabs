@@ -1,12 +1,14 @@
 ﻿$(document).ready(function () {
     initModal();
 });
+
 function initModal() {
     $(document).delegate('[data-toggle="modal"]', 'click', function () { toggleModal(this); });
     $(document).delegate('.overflow', 'click', function () { toggleModal(this); });
     $(document).delegate('.modal', 'show.modal', function (obj) { showModal(this.id) })
     $(document).delegate('.modal', 'hide.modal', function (obj) { hideModal(this.id) })
 }
+
 var modalOverflow = document.createElement("div");
 modalOverflow.className = "overflow";
 document.body.appendChild(modalOverflow);

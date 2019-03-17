@@ -91,6 +91,7 @@ namespace ISPLabs.Services
             conn.Open();
             try
             {
+                CallSQLScript(conn, "UPDATE_TOPIC");
                 CallSQLScript(conn, "INSERT_CATEGORY");
                 CallSQLScript(conn, "DELETE_CATEGORY");
                 CallSQLScript(conn, "UPDATE_CATEGORY");

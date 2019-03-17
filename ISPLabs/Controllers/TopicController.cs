@@ -52,32 +52,25 @@ namespace ISPLabs.Controllers
                     IsClosed = false,
                 };
                 var msg = new ForumMessage(model.InitialText, topic.Id, topic.User.Id);
-                string error;
-                if (_topics.Create(topic, msg, out error))
+                if (await _topics.CreateAsync(topic, msg))
                     return Ok(topic);
                 else
                 {
-                    ModelState.AddModelError("", error);
+                    ModelState.AddModelError("", _topics.LastError);
                     return BadRequest(model);
                 }
             }
             return BadRequest(model);
         }
 
-        //[Authorize]
-        //[HttpPut("{id}")]
-        //public IActionResult Update(int id, TopicAPIModel topic)
-        //{
-        //    var dbTopic = topics.GetByIdWithUser(id);
-        //    topic.Id = id;
-        //    if (User.Identity.Name == dbTopic.User.Email || User.IsInRole("admin"))
-        //    {
-        //        if(topics.Update(topic))
-        //            return NoContent();
-        //        return BadRequest();
-        //    }
-        //    return StatusCode(403);
-        //}
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> Update(Topic topic)
+        {
+            if (await _topics.UpdateAsync(topic))
+                return Ok(topic);
+            return BadRequest();
+        }
 
         ~TopicController()
         {

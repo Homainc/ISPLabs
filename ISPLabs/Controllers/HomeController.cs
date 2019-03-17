@@ -57,13 +57,9 @@ namespace ISPLabs.Controllers
         public async Task<IActionResult> RemoveTopic(int id)
         {
             var topic = await _topics.GetByIdWithUserAsync(id);
-            string error;
-            if (_topics.Delete(id, out error))
-            {
+            if (await _topics.DeleteAsync(id))
                 return RedirectToAction("Category", "Home", new { id = topic.CategoryId });
-            }
-            else
-                return BadRequest(error);
+            return BadRequest(_topics.LastError);
         }
 
         public IActionResult Test()

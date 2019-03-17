@@ -1,4 +1,5 @@
 ﻿using ISPLabs.Models;
+using ISPLabs.Services;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Data;
@@ -15,12 +16,9 @@ namespace ISPLabs.Manager
 
         public async Task<Role> GetByNameAsync(string name)
         {
-            var cmd = new OracleCommand("get_role_by_name", _conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.BindByName = true;
+            var cmd = OracleHelper.SetupProcCmd("get_role_by_name", _conn, false);
             cmd.Parameters.Add("pass_name", OracleDbType.Varchar2, 255).Value = name;
-            cmd.Parameters.Add("role_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
-            cmd.Parameters.Add("role_name", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
+            RoleManager.AppendOutPars(cmd);
             await cmd.ExecuteNonQueryAsync();
             var role = RoleManager.Convert(cmd.Parameters);
             return role;
@@ -40,6 +38,12 @@ namespace ISPLabs.Manager
             role.Id = Int32.Parse(reader["role_id"].ToString());
             role.Name = reader["role_name"].ToString();
             return role;
+        }
+
+        public static void AppendOutPars(OracleCommand cmd)
+        {
+            cmd.Parameters.Add("role_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("role_name", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
         }
     }
 }

@@ -63,7 +63,7 @@ function closeTopic(tid, tname) {
     };
     $.ajax({
         type: "PUT",
-        url: topicUri + "/" + tid,
+        url: topicUri,
         accepts: "application/json",
         contentType: "application/json",
         data: JSON.stringify(topic),
@@ -92,7 +92,6 @@ function getData() {
                 item.date = d.toLocaleString();
             });
             $("#topicTmpl").tmpl(data).appendTo("#topic_container");
-            initModal();
         }
     });
 }
