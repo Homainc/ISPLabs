@@ -16,11 +16,12 @@ namespace ISPLabs.Services
             try
             {
                 CallSQLScript(conn, "TABLE_EXIST");
-                if (!GetResultFromBoolFunc(conn, "EXIST_TABLE"))
-                {
-                    CallSQLScript(conn, "CREATE_TABLES");
-                    CallSQLScript(conn, "INSERT_INIT_ROLES");
-                }
+                if (GetResultFromBoolFunc(conn, "TABLE_EXIST"))
+                    CallSQLScript(conn, "DROP_TABLES");
+                CallSQLScript(conn, "CREATE_TABLES");
+                CallSQLScript(conn, "INSERT_INIT_ROLES");
+                CallProcedureAsync(conn, "INSERT_INIT_ROLES");
+                InitFunctions();
             }
             finally
             {
@@ -91,6 +92,7 @@ namespace ISPLabs.Services
             conn.Open();
             try
             {
+                CallSQLScript(conn, "ENCRYPT_TEXT");
                 CallSQLScript(conn, "UPDATE_TOPIC");
                 CallSQLScript(conn, "INSERT_CATEGORY");
                 CallSQLScript(conn, "DELETE_CATEGORY");
@@ -168,6 +170,12 @@ namespace ISPLabs.Services
             {
                 throw new Exception($"Error at line {lineNum}: {ex.Message}\n{oneCmd}");
             }
+        }
+
+        public async static void CallProcedureAsync(OracleConnection conn, string proc)
+        {
+            var cmd = OracleHelper.SetupProcCmd(proc, conn, false);
+            await cmd.ExecuteNonQueryAsync();
         }
     }
 }

@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using ISPLabs.Models;
 using ISPLabs.Services;
 using Oracle.ManagedDataAccess.Client;
-using System.Data;
-using System.Web.Http;
 using ISPLabs.Manager;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ISPLabs.Controllers
 {
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController

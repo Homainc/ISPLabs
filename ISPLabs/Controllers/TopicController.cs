@@ -5,7 +5,6 @@ using ISPLabs.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Oracle.ManagedDataAccess.Client;
-using System;
 using System.Threading.Tasks;
 
 namespace ISPLabs.Controllers
@@ -25,9 +24,6 @@ namespace ISPLabs.Controllers
             _topics = new TopicManager(_conn);
             _users = new UserManager(_conn);
         }
-
-        //[HttpGet]
-        //public ActionResult<ISet<TopicAPIModel>> GetAll() => topics.GetAll();
 
         [HttpGet("{id}", Name = "GetTopic")]
         public async Task<ActionResult> GetById(int id)

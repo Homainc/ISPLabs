@@ -64,7 +64,7 @@ namespace ISPLabs.Controllers
 
         public IActionResult Test()
         {
-            OracleHelper.InitFunctions();
+            OracleHelper.InitDB();
             return Content("");
         }
 
