@@ -25,8 +25,8 @@ Forum - .NET Core MVC Web Application
  - ~~`UPDATE_TOPIC_IS_CLOSED.sql`~~ - функция изменение состояния(закрыта\открыта) темы по `id`
  - `DELETE_USER.sql` - функция удаления пользователя, на вход идентификфатор, return number(1 - Успешно\0 - Ошибка), out параметр с текстом ошибки
  - `UPDATE_USER.sql` - функция изменения пользователя, на вход все поля, return number(1 - Успешно\0 - Ошибка), out параметр с текстом ошибки
- - `ENCRYPT.sql` - фукция шифрования, на входе и выходе VARCHAR2
- - Добавить вызов функции из `ENCRYPT.sql` в `LOGIN.sql`, `REGISTER.sql` и `UPDATE_USER.sql`
+ - ~~`ENCRYPT.sql`~~ - фукция шифрования, на входе и выходе VARCHAR2
+ - Добавить вызов функции из `ENCRYPT.sql` в ~~`LOGIN.sql`~~, ~~`REGISTER.sql`~~ и `UPDATE_USER.sql`
  - `CREATE_JOURNALING_TABLES.sql` - скрипт для создания таблиц журналирования, каждая таблица должна содержать все поля журналируемого объекта с префиксами `OLD_` и `NEW_`. Журналируемые таблицы `FORUM_USER`, `FORUM_MESSAGE`, `TOPIC`, `FORUM_PARTITION`, `FORUM_CATEGORY`.
  - `USER_JOURNALING.sql` - Сделать журналирование изменения\добавления\удаления пользователей
  - `MESSAGE_JOURNALING.sql` - Сделать журналирование изменения\добавления\удаления сообщений
