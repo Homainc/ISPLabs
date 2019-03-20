@@ -12,14 +12,11 @@ namespace ISPLabs.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private OracleConnection _conn;
         private CategoryManager _categories;
 
-        public CategoryController()
+        public CategoryController(OracleSession session)
         {
-            _conn = OracleHelper.GetDBConnection();
-            _conn.Open();
-            _categories = new CategoryManager(_conn);
+            _categories = new CategoryManager(session.Connection);
         }
 
         [HttpGet("{id}", Name = "GetCategory")]
@@ -50,12 +47,6 @@ namespace ISPLabs.Controllers
             if (await _categories.DeleteAsync(id))
                 return Ok(id);
             return BadRequest(_categories.LastError);
-        }
-
-        ~CategoryController()
-        {
-            _conn.Close();
-            _conn.Dispose();
         }
     }
 }

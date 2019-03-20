@@ -15,16 +15,13 @@ namespace ISPLabs.Controllers
 {
     public class AccountController : Controller
     {
-        private OracleConnection _conn;
         private UserManager _users;
         private RoleManager _roles;
 
-        public AccountController()
+        public AccountController(OracleSession session)
         {
-            _conn = OracleHelper.GetDBConnection();
-            _conn.Open();
-            _users = new UserManager(_conn);
-            _roles = new RoleManager(_conn);
+            _users = new UserManager(session.Connection);
+            _roles = new RoleManager(session.Connection);
         }
 
         [HttpGet]
@@ -88,12 +85,6 @@ namespace ISPLabs.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
-        }
-
-        ~AccountController()
-        {
-            _conn.Close();
-            _conn.Dispose();
         }
     }
 }

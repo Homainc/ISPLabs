@@ -12,14 +12,11 @@ namespace ISPLabs.Controllers
 {
     public class HomeController : Controller
     {
-        private OracleConnection _conn;
         private TopicManager _topics;
 
-        public HomeController()
+        public HomeController(OracleSession session)
         {
-            _conn = OracleHelper.GetDBConnection();
-            _conn.Open();
-            _topics = new TopicManager(_conn);
+            _topics = new TopicManager(session.Connection);
         }
 
         [HttpPost]
@@ -66,12 +63,6 @@ namespace ISPLabs.Controllers
         {
             OracleHelper.InitDB();
             return Content("");
-        }
-
-        ~HomeController()
-        {
-            _conn.Close();
-            _conn.Dispose();
         }
     }
 }

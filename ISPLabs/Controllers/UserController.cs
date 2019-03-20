@@ -17,11 +17,9 @@ namespace ISPLabs.Controllers
         private OracleConnection _conn;
         private UserManager _users;
 
-        public UserController()
+        public UserController(OracleSession session)
         {
-            _conn = OracleHelper.GetDBConnection();
-            _conn.Open();
-            _users = new UserManager(_conn);
+            _users = new UserManager(session.Connection);
 
         }
 
@@ -78,11 +76,5 @@ namespace ISPLabs.Controllers
         //            }
         //        }
         //    }
-
-        ~UserController()
-        {
-            _conn.Close();
-            _conn.Dispose();
-        }
     }
 }

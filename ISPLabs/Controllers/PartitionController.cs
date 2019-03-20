@@ -12,14 +12,11 @@ namespace ISPLabs.Controllers
     [ApiController]
     public class PartitionController : ControllerBase
     {
-        private OracleConnection _conn;
         private PartitionManager _partitions;
 
-        public PartitionController()
+        public PartitionController(OracleSession session)
         {
-            _conn = OracleHelper.GetDBConnection();
-            _conn.Open();
-            _partitions = new PartitionManager(_conn);
+            _partitions = new PartitionManager(session.Connection);
         }
 
         [HttpGet]
@@ -47,12 +44,6 @@ namespace ISPLabs.Controllers
             if (await _partitions.DeleteAsync(id))
                 return Ok(id);
             return BadRequest(_partitions.LastError);
-        }
-
-        ~PartitionController()
-        {
-            _conn.Clone();
-            _conn.Dispose();
         }
     }
 }

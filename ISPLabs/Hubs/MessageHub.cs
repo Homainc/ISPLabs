@@ -3,23 +3,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using ISPLabs.Services;
 using ISPLabs.Models;
-using Oracle.ManagedDataAccess.Client;
 using ISPLabs.Manager;
 
 namespace ISPLabs.Hubs
 {
     public class MessageHub : Hub
     {
-        private OracleConnection _conn;
         private ForumMessageManager _messages;
         private UserManager _users;
 
-        public MessageHub()
+        public MessageHub(OracleSession session)
         {
-            _conn = OracleHelper.GetDBConnection();
-            _conn.Open();
-            _messages = new ForumMessageManager(_conn);
-            _users = new UserManager(_conn);
+            _messages = new ForumMessageManager(session.Connection);
+            _users = new UserManager(session.Connection);
         }
 
         [Authorize]
@@ -46,12 +42,6 @@ namespace ISPLabs.Hubs
         {
             if (await _messages.UpdateAsync(new ForumMessage { Id = id, Text = text }))
                 await Clients.All.SendAsync($"Changed{topicId}", id, text);
-        }
-
-        ~MessageHub()
-        {
-            _conn.Close();
-            _conn.Dispose();
         }
     }
 }

@@ -13,16 +13,13 @@ namespace ISPLabs.Controllers
     [ApiController]
     public class TopicController : Controller
     {
-        private OracleConnection _conn;
         private TopicManager _topics;
         private UserManager _users;
 
-        public TopicController()
+        public TopicController(OracleSession session)
         {
-            _conn = OracleHelper.GetDBConnection();
-            _conn.Open();
-            _topics = new TopicManager(_conn);
-            _users = new UserManager(_conn);
+            _topics = new TopicManager(session.Connection);
+            _users = new UserManager(session.Connection);
         }
 
         [HttpGet("{id}", Name = "GetTopic")]
@@ -66,12 +63,6 @@ namespace ISPLabs.Controllers
             if (await _topics.UpdateAsync(topic))
                 return Ok(topic);
             return BadRequest();
-        }
-
-        ~TopicController()
-        {
-            _conn.Close();
-            _conn.Dispose();
         }
     }
 }
