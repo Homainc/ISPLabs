@@ -92,6 +92,7 @@ namespace ISPLabs.Services
             conn.Open();
             try
             {
+                CallSQLScript(conn, "JOURNALING");
                 CallSQLScript(conn, "ENCRYPT_TEXT");
                 CallSQLScript(conn, "UPDATE_TOPIC");
                 CallSQLScript(conn, "INSERT_CATEGORY");
