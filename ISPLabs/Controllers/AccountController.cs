@@ -22,6 +22,8 @@ namespace ISPLabs.Controllers
         {
             _users = new UserManager(session.Connection);
             _roles = new RoleManager(session.Connection);
+            if (User.Identity.IsAuthenticated)
+                session.AddLoginContext(User.Identity.Name);
         }
 
         [HttpGet]

@@ -20,6 +20,8 @@ namespace ISPLabs.Controllers
         {
             _topics = new TopicManager(session.Connection);
             _users = new UserManager(session.Connection);
+            if (User.Identity.IsAuthenticated)
+                session.AddLoginContext(User.Identity.Name);
         }
 
         [HttpGet("{id}", Name = "GetTopic")]

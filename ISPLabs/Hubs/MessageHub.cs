@@ -16,6 +16,8 @@ namespace ISPLabs.Hubs
         {
             _messages = new ForumMessageManager(session.Connection);
             _users = new UserManager(session.Connection);
+            if (Context.User.Identity.IsAuthenticated)
+                session.AddLoginContext(Context.User.Identity.Name);
         }
 
         [Authorize]

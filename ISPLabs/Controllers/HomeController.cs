@@ -17,6 +17,8 @@ namespace ISPLabs.Controllers
         public HomeController(OracleSession session)
         {
             _topics = new TopicManager(session.Connection);
+            if (User.Identity.IsAuthenticated)
+                session.AddLoginContext(User.Identity.Name);
         }
 
         [HttpPost]

@@ -17,6 +17,8 @@ namespace ISPLabs.Controllers
         public PartitionController(OracleSession session)
         {
             _partitions = new PartitionManager(session.Connection);
+            if (User.Identity.IsAuthenticated)
+                session.AddLoginContext(User.Identity.Name);
         }
 
         [HttpGet]

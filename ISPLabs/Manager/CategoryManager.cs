@@ -44,7 +44,7 @@ namespace ISPLabs.Manager
         {
             var cmd = OracleHelper.SetupProcCmd("insert_category", _conn);
             CategoryManager.AppendInPars(cmd, category, false);
-            cmd.Parameters.Add("category_id", OracleDbType.Int32, 255).Direction = ParameterDirection.Output;
+            cmd.Parameters.Add("category_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
             cmd.Parameters.Add("er", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
             await cmd.ExecuteNonQueryAsync();
             if (OracleHelper.BoolResultWithError(cmd, out _lastError))

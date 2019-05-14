@@ -12,7 +12,7 @@ namespace ISPLabs.Controllers
     [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController
+    public class UserController : Controller
     {
         private OracleConnection _conn;
         private UserManager _users;
@@ -20,6 +20,7 @@ namespace ISPLabs.Controllers
         public UserController(OracleSession session)
         {
             _users = new UserManager(session.Connection);
+            session.AddLoginContext(User.Identity.Name);
 
         }
 

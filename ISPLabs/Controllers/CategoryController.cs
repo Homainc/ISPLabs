@@ -17,6 +17,8 @@ namespace ISPLabs.Controllers
         public CategoryController(OracleSession session)
         {
             _categories = new CategoryManager(session.Connection);
+            if (User.Identity.IsAuthenticated)
+                session.AddLoginContext(User.Identity.Name);
         }
 
         [HttpGet("{id}", Name = "GetCategory")]
