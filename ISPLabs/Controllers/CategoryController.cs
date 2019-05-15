@@ -17,8 +17,6 @@ namespace ISPLabs.Controllers
         public CategoryController(OracleSession session)
         {
             _categories = new CategoryManager(session.Connection);
-            if (User.Identity.IsAuthenticated)
-                session.AddLoginContext(User.Identity.Name);
         }
 
         [HttpGet("{id}", Name = "GetCategory")]
@@ -28,7 +26,7 @@ namespace ISPLabs.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Category category)
         {
-            if (await _categories.CreateAsync(category))
+            if (await _categories.CreateAsync(category, User.Identity.Name))
                 return Ok(category);
             return BadRequest(_categories.LastError);
         }
@@ -37,7 +35,7 @@ namespace ISPLabs.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(Category category)
         {
-            if(await _categories.UpdateAsync(category))
+            if(await _categories.UpdateAsync(category, User.Identity.Name))
                 return Ok(category);
             return BadRequest(_categories.LastError);
         }
@@ -46,7 +44,7 @@ namespace ISPLabs.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            if (await _categories.DeleteAsync(id))
+            if (await _categories.DeleteAsync(id, User.Identity.Name))
                 return Ok(id);
             return BadRequest(_categories.LastError);
         }

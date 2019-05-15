@@ -16,8 +16,6 @@ namespace ISPLabs.Hubs
         {
             _messages = new ForumMessageManager(session.Connection);
             _users = new UserManager(session.Connection);
-            if (Context.User.Identity.IsAuthenticated)
-                session.AddLoginContext(Context.User.Identity.Name);
         }
 
         [Authorize]
@@ -26,7 +24,7 @@ namespace ISPLabs.Hubs
             var user = await _users.GetByEmailAsync(Context.User.Identity.Name);
             var msg = new ForumMessage(message, topicId, user.Id);
             string error;
-            if(_messages.Create(msg, out error))
+            if(_messages.Create(msg, out error, Context.User.Identity.Name))
             {
                 await Clients.All.SendAsync($"Receive{topicId}", msg);
             }
@@ -35,14 +33,14 @@ namespace ISPLabs.Hubs
         [Authorize]
         public async Task DeleteMessage(int id, int topicId)
         {
-            if (await _messages.DeleteAsync(id))
+            if (await _messages.DeleteAsync(id, Context.User.Identity.Name))
                 await Clients.All.SendAsync($"Deleted{topicId}", id);
         }
 
         [Authorize]
         public async Task EditMessage(int id, string text, int topicId)
         {
-            if (await _messages.UpdateAsync(new ForumMessage { Id = id, Text = text }))
+            if (await _messages.UpdateAsync(new ForumMessage { Id = id, Text = text }, Context.User.Identity.Name))
                 await Clients.All.SendAsync($"Changed{topicId}", id, text);
         }
     }

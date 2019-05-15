@@ -15,8 +15,9 @@ namespace ISPLabs.Manager
 
         public ForumMessageManager(OracleConnection conn) => _conn = conn;
 
-        public bool Create(ForumMessage message, out string error)
+        public bool Create(ForumMessage message, out string error, string username)
         {
+            OracleHelper.AddLoginContext(username, _conn);
             var cmd = new OracleCommand("insert_message", _conn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.BindByName = true;
@@ -47,8 +48,9 @@ namespace ISPLabs.Manager
             return false;
         }
 
-        public async Task<bool> UpdateAsync(ForumMessage msg)
+        public async Task<bool> UpdateAsync(ForumMessage msg, string username)
         {
+            OracleHelper.AddLoginContext(username, _conn);
             var cmd = OracleHelper.SetupProcCmd("update_message", _conn);
             cmd.Parameters.Add("pass_id", OracleDbType.Int32).Value = msg.Id;
             cmd.Parameters.Add("pass_text", OracleDbType.Varchar2, 255).Value = msg.Text;
@@ -56,8 +58,9 @@ namespace ISPLabs.Manager
             return OracleHelper.BoolResult(cmd);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, string username)
         {
+            OracleHelper.AddLoginContext(username, _conn);
             var cmd = new OracleCommand("delete_message", _conn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.BindByName = true;

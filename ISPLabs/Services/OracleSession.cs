@@ -24,13 +24,6 @@ namespace ISPLabs.Services
             _conn.Open();
         }
 
-        public void AddLoginContext(string username)
-        {
-            var cmd = OracleHelper.SetupProcCmd("LOGIN_CONTEXT_ADD", _conn, false);
-            cmd.Parameters.Add("username", OracleDbType.Varchar2, 255).Value = username;
-            cmd.ExecuteNonQuery();
-        }
-
         public void Dispose()
         {
             Dispose(true);

@@ -20,8 +20,6 @@ namespace ISPLabs.Controllers
         public UserController(OracleSession session)
         {
             _users = new UserManager(session.Connection);
-            session.AddLoginContext(User.Identity.Name);
-
         }
 
         [HttpGet]

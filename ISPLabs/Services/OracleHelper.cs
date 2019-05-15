@@ -178,5 +178,12 @@ namespace ISPLabs.Services
             var cmd = OracleHelper.SetupProcCmd(proc, conn, false);
             await cmd.ExecuteNonQueryAsync();
         }
+
+        public static void AddLoginContext(string username, OracleConnection conn)
+        {
+            var cmd = OracleHelper.SetupProcCmd("LOGIN_CONTEXT_ADD", conn, false);
+            cmd.Parameters.Add("username", OracleDbType.Varchar2, 255).Value = username;
+            cmd.ExecuteNonQuery();
+        }
     }
 }

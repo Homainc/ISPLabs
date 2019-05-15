@@ -20,8 +20,6 @@ namespace ISPLabs.Controllers
         {
             _topics = new TopicManager(session.Connection);
             _users = new UserManager(session.Connection);
-            if (User.Identity.IsAuthenticated)
-                session.AddLoginContext(User.Identity.Name);
         }
 
         [HttpGet("{id}", Name = "GetTopic")]
@@ -47,7 +45,7 @@ namespace ISPLabs.Controllers
                     IsClosed = false,
                 };
                 var msg = new ForumMessage(model.InitialText, topic.Id, topic.User.Id);
-                if (await _topics.CreateAsync(topic, msg))
+                if (await _topics.CreateAsync(topic, msg, User.Identity.Name))
                     return Ok(topic);
                 else
                 {
@@ -62,7 +60,7 @@ namespace ISPLabs.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(Topic topic)
         {
-            if (await _topics.UpdateAsync(topic))
+            if (await _topics.UpdateAsync(topic, User.Identity.Name))
                 return Ok(topic);
             return BadRequest();
         }

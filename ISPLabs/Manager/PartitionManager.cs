@@ -47,8 +47,9 @@ namespace ISPLabs.Manager
             return dict.Values.ToList();
         }
 
-        public async Task<bool> CreateAsync(Partition partition)
+        public async Task<bool> CreateAsync(Partition partition, string username)
         {
+            OracleHelper.AddLoginContext(username, _conn);
             var cmd = OracleHelper.SetupProcCmd("insert_partition", _conn);
             cmd.Parameters.Add("partition_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
             cmd.Parameters.Add("p_name", OracleDbType.Varchar2, 255).Value = partition.Name;
@@ -58,8 +59,9 @@ namespace ISPLabs.Manager
             return OracleHelper.BoolResultWithError(cmd, out _lastError);
         }
 
-        public async Task<bool> UpdateAsync(Partition partition)
+        public async Task<bool> UpdateAsync(Partition partition, string username)
         {
+            OracleHelper.AddLoginContext(username, _conn);
             var cmd = OracleHelper.SetupProcCmd("update_partition", _conn);
             cmd.Parameters.Add("p_id", OracleDbType.Int32).Value = partition.Id;
             cmd.Parameters.Add("p_name", OracleDbType.Varchar2, 255).Value = partition.Name;
@@ -69,8 +71,9 @@ namespace ISPLabs.Manager
         
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, string username)
         {
+            OracleHelper.AddLoginContext(username, _conn);
             var cmd = OracleHelper.SetupProcCmd("delete_partition", _conn);
             cmd.Parameters.Add("p_id", OracleDbType.Int32).Value = id;
             cmd.Parameters.Add("er", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;

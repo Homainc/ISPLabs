@@ -17,8 +17,6 @@ namespace ISPLabs.Controllers
         public PartitionController(OracleSession session)
         {
             _partitions = new PartitionManager(session.Connection);
-            if (User.Identity.IsAuthenticated)
-                session.AddLoginContext(User.Identity.Name);
         }
 
         [HttpGet]
@@ -27,7 +25,7 @@ namespace ISPLabs.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Partition partition)
         {
-            if (await _partitions.CreateAsync(partition))
+            if (await _partitions.CreateAsync(partition, User.Identity.Name))
                 return Ok(partition);
             return BadRequest(_partitions.LastError);
         }
@@ -35,7 +33,7 @@ namespace ISPLabs.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(Partition partition)
         {
-            if (await _partitions.UpdateAsync(partition))
+            if (await _partitions.UpdateAsync(partition, User.Identity.Name))
                 return Ok(partition);
             return BadRequest(_partitions.LastError);
         }
@@ -43,7 +41,7 @@ namespace ISPLabs.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            if (await _partitions.DeleteAsync(id))
+            if (await _partitions.DeleteAsync(id, User.Identity.Name))
                 return Ok(id);
             return BadRequest(_partitions.LastError);
         }

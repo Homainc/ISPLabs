@@ -17,8 +17,6 @@ namespace ISPLabs.Controllers
         public HomeController(OracleSession session)
         {
             _topics = new TopicManager(session.Connection);
-            if (User.Identity.IsAuthenticated)
-                session.AddLoginContext(User.Identity.Name);
         }
 
         [HttpPost]
@@ -56,7 +54,7 @@ namespace ISPLabs.Controllers
         public async Task<IActionResult> RemoveTopic(int id)
         {
             var topic = await _topics.GetByIdWithUserAsync(id);
-            if (await _topics.DeleteAsync(id))
+            if (await _topics.DeleteAsync(id, User.Identity.Name))
                 return RedirectToAction("Category", "Home", new { id = topic.CategoryId });
             return BadRequest(_topics.LastError);
         }

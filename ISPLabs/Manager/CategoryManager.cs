@@ -40,8 +40,9 @@ namespace ISPLabs.Manager
             return category;
         }
 
-        public async Task<bool> CreateAsync(Category category)
+        public async Task<bool> CreateAsync(Category category, string username)
         {
+            OracleHelper.AddLoginContext(username, _conn);
             var cmd = OracleHelper.SetupProcCmd("insert_category", _conn);
             CategoryManager.AppendInPars(cmd, category, false);
             cmd.Parameters.Add("category_id", OracleDbType.Int32).Direction = ParameterDirection.Output;
@@ -55,8 +56,9 @@ namespace ISPLabs.Manager
             return false;
         }
 
-        public async Task<bool> UpdateAsync(Category category)
+        public async Task<bool> UpdateAsync(Category category, string username)
         {
+            OracleHelper.AddLoginContext(username, _conn);
             var cmd = OracleHelper.SetupProcCmd("update_category", _conn);
             CategoryManager.AppendInPars(cmd, category, true);
             cmd.Parameters.Add("er", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
@@ -64,8 +66,9 @@ namespace ISPLabs.Manager
             return OracleHelper.BoolResultWithError(cmd, out _lastError);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, string username)
         {
+            OracleHelper.AddLoginContext(username, _conn);
             var cmd = OracleHelper.SetupProcCmd("delete_category", _conn);
             cmd.Parameters.Add("p_id", OracleDbType.Int32).Value = id;
             cmd.Parameters.Add("er", OracleDbType.Varchar2, 255).Direction = ParameterDirection.Output;
